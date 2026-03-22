@@ -1,0 +1,80 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background-color: #fafafa;
+    color: #1e1e1e;
+    line-height: 1.5;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background-color: #1e1e1e;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.btn:hover {
+    background-color: #3a3a3a;
+
+}
+
+.btn-outline {
+    display: inline-block;
+    padding: 10px 24px;
+    background-color: transparent;
+    color: #1e1e1e;
+    text-decoration: none;
+    font-weight: 500;
+    border: 1.5px solid #1e1e1e;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.btn-outline:hover {
+    background-color: #1e1e1e;
+    color: white;
+}
+
+/* Отступы для секций */
+section {
+    padding: 70px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+section:last-of-type {
+    border-bottom: none;
+}
+
+/* Разделители */
+.section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d4a373, transparent);
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto 40px;
+}

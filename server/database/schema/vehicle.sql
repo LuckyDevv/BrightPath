@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS `vehicles` (
+                `id` INT PRIMARY KEY AUTO_INCREMENT COMMENT 'ID автомобиля',
+                `name` VARCHAR(255) NOT NULL COMMENT 'Название модели',
+                `image_path` VARCHAR(500) NOT NULL COMMENT 'Путь к папке с изображениями',
+                `category` INT NOT NULL COMMENT 'Категория автомобиля',
+                `seats` TINYINT NOT NULL DEFAULT 2 COMMENT 'Количество мест',
+                `creation_year` YEAR NOT NULL COMMENT 'Год выпуска',
+                `color` VARCHAR(50) NOT NULL COMMENT 'Цвет',
+                `mileage` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT 'Пробег (км)',
+                `vin` VARCHAR(255) NOT NULL COMMENT 'VIN-номер автомобиля',
+                `transmission` TINYINT NOT NULL DEFAULT 1 COMMENT '1-механика, 2-автомат, 3-робот',
+                `fuel` TINYINT NOT NULL DEFAULT 1 COMMENT '1-бензин, 2-дизель, 3-электро',
+                `description_short` TEXT COMMENT 'Короткое описание (карточка)',
+                `description_full` TEXT COMMENT 'Полное описание (детальная)',
+                `price` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT 'Цена за мероприятие',
+                `orders_count` INT NOT NULL DEFAULT 0 COMMENT 'Сколько раз заказывали',
+                `total_stock` INT NOT NULL DEFAULT 1 COMMENT 'Всего авто',
+                `reserved_stock` INT NOT NULL DEFAULT 0 COMMENT 'Забронировано',
+                `is_active` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Показывать на сайте',
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата создания',
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата обновления'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

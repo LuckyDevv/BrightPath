@@ -1,0 +1,1 @@
+SELECT * FROM `vehicles` WHERE `id`=:id AND `is_active`=1;

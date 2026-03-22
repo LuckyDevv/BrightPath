@@ -1,0 +1,16 @@
+{
+  "require": {
+    "php": "^8.5",
+    "twig/twig": "^3.0",
+    "egulias/email-validator": "^4.0.1",
+    "ext-pdo": "*",
+    "ext-gd": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "executors": "server/database",
+      "managers": "server/database",
+      "tpl": "server/twig"
+    }
+  }
+}

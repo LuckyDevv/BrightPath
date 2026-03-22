@@ -1,0 +1,241 @@
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-container {
+    background-color: #ffffff;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s;
+}
+
+.modal-overlay.active .modal-container {
+    transform: scale(1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    color: #d4a373;
+    background-color: #f5f5f5;
+}
+
+.modal-content {
+    padding: 40px 30px;
+}
+
+.modal-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.modal-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* Форма */
+.modal-form {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #d4a373;
+}
+
+.required {
+    color: #d4a373;
+}
+
+.form-agreement {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.form-agreement input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #d4a373;
+}
+
+.form-agreement label {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.modal-submit-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #1e1e1e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.modal-submit-btn:hover {
+    background-color: #d4a373;
+}
+
+/* Контакты */
+.modal-contacts {
+    border-top: 1px solid #eee;
+    padding-top: 25px;
+}
+
+.modal-contacts h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.modal-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.modal-contact-item svg {
+    stroke: #d4a373;
+    flex-shrink: 0;
+}
+
+.modal-contact-item a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.modal-contact-item a:hover {
+    color: #d4a373;
+}
+
+.modal-contact-item span {
+    color: #666;
+}
+
+/* Сообщение об успехе */
+.modal-success {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.modal-success.active {
+    display: block;
+}
+
+.modal-success svg {
+    margin-bottom: 15px;
+}
+
+.modal-success h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin-bottom: 10px;
+}
+
+.modal-success p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Скрываем скроллбар в модальном окне */
+.modal-container {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE и Edge */
+}
+
+.modal-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* Если в модальном окне скроллится другой элемент, например .filters-content */
+.filters-content {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.filters-content::-webkit-scrollbar {
+    display: none;
+}
