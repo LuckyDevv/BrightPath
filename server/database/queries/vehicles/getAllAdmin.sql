@@ -1,0 +1,1 @@
+SELECT `id`,`image_path`,`name`,`category`,`price`,`total_stock`,`is_active` FROM `vehicles` ORDER BY `id` ASC;

@@ -47,200 +47,7 @@ if (filtersToggle && filtersWrapper && closeFilters) {
 }
 
 // ===== ДАННЫЕ АВТОМОБИЛЕЙ =====
-const vehiclesData = [
-    {
-        id: 1,
-        name: 'Mercedes-Benz E-Class',
-        category: 'катафалк',
-        image: 'src/images/mercedes-e-class.jpg',
-        seats: 2,
-        year: 2022,
-        color: 'Черный',
-        transmission: 'Автомат',
-        fuel: 'Дизель',
-        description: 'Премиальный катафалк для торжественных церемоний. Отделка салона премиум-класса.',
-        price: 25000,
-        available: true,
-        orders: 45,
-        stock: 12
-    },
-    {
-        id: 2,
-        name: 'Cadillac CTS',
-        category: 'катафалк',
-        image: 'src/images/cadillac-cts.jpg',
-        seats: 2,
-        year: 2021,
-        color: 'Черный',
-        transmission: 'Автомат',
-        fuel: 'Бензин',
-        description: 'Представительский катафалк американского производства. Просторный салон.',
-        price: 30000,
-        available: true,
-        orders: 38,
-        stock: 9
-    },
-    {
-        id: 3,
-        name: 'Hummer H2',
-        category: 'катафалк',
-        image: 'src/images/hummer-h2.webp',
-        seats: 2,
-        year: 2020,
-        color: 'Черный',
-        transmission: 'Автомат',
-        fuel: 'Бензин',
-        description: 'Уникальный лимузин-катафалк на базе Hummer. Вместительный и внушительный.',
-        price: 35000,
-        available: true,
-        orders: 29,
-        stock: 4
-    },
-    {
-        id: 4,
-        name: 'ГАЗель NEXT',
-        category: 'катафалк',
-        image: 'src/images/gazel-next.jpg',
-        seats: 2,
-        year: 2023,
-        color: 'Черный',
-        transmission: 'Механика',
-        fuel: 'Дизель',
-        description: 'Экономичный и надежный катафалк для любых мероприятий.',
-        price: 13000,
-        available: true,
-        orders: 52,
-        stock: 19
-    },
-    {
-        id: 5,
-        name: 'Mercedes-Benz Sprinter',
-        category: 'автобус',
-        image: 'src/images/mercedes-sprinter.webp',
-        seats: 20,
-        year: 2022,
-        color: 'Черный',
-        transmission: 'Автомат',
-        fuel: 'Дизель',
-        description: 'Комфортабельный автобус для перевозки гостей. Кондиционер, мягкие кресла.',
-        price: 24000,
-        available: true,
-        orders: 61,
-        stock: 11
-    },
-    {
-        id: 6,
-        name: 'Ford Transit',
-        category: 'автобус',
-        image: 'src/images/ford-transit.webp',
-        seats: 16,
-        year: 2021,
-        color: 'Черный',
-        transmission: 'Механика',
-        fuel: 'Дизель',
-        description: 'Надежный микроавтобус для перевозки гостей.',
-        price: 18000,
-        available: true,
-        orders: 43,
-        stock: 7
-    },
-    {
-        id: 7,
-        name: 'ПАЗ Вектор NEXT',
-        category: 'автобус',
-        image: 'src/images/paz-vector-next.webp',
-        seats: 30,
-        year: 2022,
-        color: 'Белый',
-        transmission: 'Механика',
-        fuel: 'Дизель',
-        description: 'Вместительный автобус для больших групп. Отличная проходимость.',
-        price: 10000,
-        available: true,
-        orders: 27,
-        stock: 9
-    },
-    {
-        id: 8,
-        name: 'Toyota Camry',
-        category: 'легковой',
-        image: 'src/images/toyota-camry.webp',
-        seats: 4,
-        year: 2023,
-        color: 'Черный',
-        transmission: 'Автомат',
-        fuel: 'Бензин',
-        description: 'Автомобиль для сопровождения кортежа. Комфортный и престижный.',
-        price: 8000,
-        available: true,
-        orders: 73,
-        stock: 9
-    },
-    {
-        id: 9,
-        name: 'Skoda Octavia',
-        category: 'легковой',
-        image: 'src/images/skoda-octavia.webp',
-        seats: 4,
-        year: 2022,
-        color: 'Черный',
-        transmission: 'Автомат',
-        fuel: 'Бензин',
-        description: 'Надежный автомобиль для поездок. Отличное соотношение цены и качества.',
-        price: 6000,
-        available: true,
-        orders: 68,
-        stock: 13
-    },
-    {
-        id: 10,
-        name: 'Hyundai Solaris',
-        category: 'легковой',
-        image: 'src/images/hyundai-solaris.webp',
-        seats: 4,
-        year: 2021,
-        color: 'Черный',
-        transmission: 'Автомат',
-        fuel: 'Бензин',
-        description: 'Экономичный автомобиль для поездок. Идеален для небольших групп.',
-        price: 4000,
-        available: true,
-        orders: 55,
-        stock: 17
-    },
-    {
-        id: 11,
-        name: 'DongFeng K33-561',
-        category: 'спецтранспорт',
-        image: 'src/images/dongfeng-K33-561.png',
-        seats: 2,
-        year: 2023,
-        color: 'Черный',
-        transmission: 'Механика',
-        fuel: 'Дизель',
-        description: 'Специальный транспорт для перевозки крупногабаритных грузов.',
-        price: 22000,
-        available: true,
-        orders: 19,
-        stock: 5
-    },
-    {
-        id: 12,
-        name: 'Lincoln Town Car III',
-        category: 'спецтранспорт',
-        image: 'src/images/lincoln-town-car-iii.webp',
-        seats: 8,
-        year: 2002,
-        color: 'Черный',
-        transmission: 'Автомат',
-        fuel: 'Бензин',
-        description: 'Роскошный лимузин для VIP-церемоний. Максимальный комфорт.',
-        price: 35000,
-        available: true,
-        orders: 31,
-        stock: 7
-    }
-];
+let vehiclesData = [];
 
 // ===== ЭЛЕМЕНТЫ DOM =====
 const vehiclesGrid = document.getElementById('vehiclesGrid');
@@ -299,20 +106,65 @@ function renderVehicles(vehicles) {
         card.className = 'vehicle-card';
 
         // Форматирование цены
-        const formattedPrice = vehicle.price.toLocaleString('ru-RU');
+        const formattedPrice = Math.floor(vehicle.price).toLocaleString('ru-RU');
 
         // Получаем русское название категории
         let categoryName = '';
         switch(vehicle.category) {
-            case 'катафалк': categoryName = 'Катафалк'; break;
-            case 'автобус': categoryName = 'Автобус для гостей'; break;
-            case 'легковой': categoryName = 'Легковой'; break;
-            case 'спецтранспорт': categoryName = 'Спецтранспорт'; break;
+            case 1: categoryName = 'Катафалк'; break;
+            case 2: categoryName = 'Автобус для гостей'; break;
+            case 3: categoryName = 'Легковой'; break;
+            case 4: categoryName = 'Спецтранспорт'; break;
             default: categoryName = vehicle.category;
         }
 
         card.innerHTML = `
-            
+            <div class="vehicle-image">
+                <img src="../src/images/vehicles/${vehicle.image_path}/main.jpg" alt="${vehicle.name}" onerror="this.src='../src/images/placeholder.jpg'">
+            </div>
+            <div class="vehicle-content">
+                <span class="vehicle-category">${categoryName}</span>
+                <h3 class="vehicle-name">${vehicle.name}</h3>
+                <div class="vehicle-details">
+                    <span class="vehicle-detail">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        </svg>
+                        ${vehicle.year} г.
+                    </span>
+                    <span class="vehicle-detail">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="4" y="8" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <circle cx="8" cy="16" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <circle cx="16" cy="16" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        </svg>
+                        ${vehicle.seats} мест
+                    </span>
+                    <span class="vehicle-detail">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                        </svg>
+                        ${vehicle.color}
+                    </span>
+                    <span class="vehicle-detail">
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <rect x="2" y="7" width="20" height="12" rx="2" stroke="currentColor" fill="none" stroke-width="1.5"/>
+                            <circle cx="7" cy="17" r="2" stroke="currentColor" fill="none" stroke-width="1.5"/>
+                            <circle cx="17" cy="17" r="2" stroke="currentColor" fill="none" stroke-width="1.5"/>
+                            <text x="12" y="16" text-anchor="middle" fill="#d4a373" font-size="8" font-weight="bold">${vehicle.stock}</text>
+                        </svg>
+                        ${vehicle.stock} шт.
+                    </span>
+                </div>
+                <p class="vehicle-description">${vehicle.description}</p>
+                <div class="vehicle-price">от ${formattedPrice} ₽ <small>за мероприятие</small></div>
+                <div class="vehicle-actions">
+                    <a href="vehicle.php?id=${vehicle.id}" class="btn-outline">Подробнее</a>
+                    <a href="#" class="btn">Заказать</a>
+                </div>
+            </div>
         `;
 
         vehiclesGrid.appendChild(card);

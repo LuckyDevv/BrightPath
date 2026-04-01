@@ -5,12 +5,12 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 $vehiclesManager = new VehiclesManager();
 $vehicles = $vehiclesManager->getAllVehicles();
+$loader = new FilesystemLoader('../server/twig');
+$twig = new Environment($loader, [
+    //'cache' => '../server/twig/cache',
+    'autoescape' => false,
+]);
 
-if ($vehicles == []) {
-    print("Null");
-}else{
-    var_dump($vehicles);
-}
 /*$vehicles_data = [
         [
                 "name" => "Mercedes-Benz E-Class",
@@ -260,6 +260,9 @@ foreach ($vehicles_data as $vehicle) {
     <link rel="icon" href="../logo.png" type="image/png">
 </head>
 <body>
+<?php
+echo $twig->render("header.twig");
+?>
 <!-- header -->
 <main>
     <!-- Заголовок страницы -->
@@ -515,9 +518,16 @@ foreach ($vehicles_data as $vehicle) {
         </div>
     </section>
 </main>
+<?php
+echo $twig->render("footer.twig");
+echo $twig->render("modal.twig");
+?>
 <!-- footer -->
 <!-- modal -->
 <script src="src/js/index.js"></script>
+<script>
+    vehiclesData = <?= json_encode($vehicles, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+</script>
 <script src="../src/js/modal.js"></script>
 </body>
 </html>

@@ -10,7 +10,8 @@
     "psr-0": {
       "executors": "server/database",
       "managers": "server/database",
-      "tpl": "server/twig"
+      "tpl": "server/twig",
+      "": "server"
     }
   }
 }

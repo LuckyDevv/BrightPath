@@ -3,6 +3,7 @@ SELECT
     `name`,
     `image_path`,
     `seats`,
+    `category`,
     `creation_year` AS `year`,
     `color`,
     `transmission`,

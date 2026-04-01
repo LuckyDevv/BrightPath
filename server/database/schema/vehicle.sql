@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS `vehicles` (
                 `mileage` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT 'Пробег (км)',
                 `vin` VARCHAR(255) NOT NULL COMMENT 'VIN-номер автомобиля',
                 `transmission` TINYINT NOT NULL DEFAULT 1 COMMENT '1-механика, 2-автомат, 3-робот',
+                `drive` TINYINT NOT NULL DEFAULT 1 COMMENT '1-задний, 2-передний, 3-полный',
                 `fuel` TINYINT NOT NULL DEFAULT 1 COMMENT '1-бензин, 2-дизель, 3-электро',
                 `description_short` TEXT COMMENT 'Короткое описание (карточка)',
                 `description_full` TEXT COMMENT 'Полное описание (детальная)',

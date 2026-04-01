@@ -40,6 +40,18 @@ class VehiclesManager
         }
     }
 
+    public function deleteVehicleById(int $id): bool
+    {
+        try {
+            $stmt = $this->db->prepare($this->commands->getDeleteVehicle());
+            $stmt->bindValue(":vehicleId", $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+            return false;
+        }
+    }
+
     public function getVehicleById(int $idVehicle): array
     {
         try {
@@ -65,6 +77,8 @@ class VehiclesManager
 
             $stmt = $this->db->prepare($this->commands->addVehicle());
 
+
+
             $stmt->execute([
                 ':name' => $data['name'],
                 ':image_path' => rtrim($data['image_path'], '/'),
@@ -88,8 +102,32 @@ class VehiclesManager
             return $this->db->lastInsertId();
 
         } catch (PDOException|Exception|Error $e) {
-            $this->createLog("VehicleManager", $e);
+            $this->createLog("VehiclesManager", $e);
             return false;
+        }
+    }
+
+    public function getPopular(): array
+    {
+        try {
+            $stmt = $this->db->prepare($this->commands->getPopularVehicles());
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+            return [];
+        }
+    }
+
+    public function getAllAdmin(): array
+    {
+        try {
+            $stmt = $this->db->prepare($this->commands->getAllVehiclesForAdmin());
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+            return [];
         }
     }
 
@@ -103,7 +141,7 @@ class VehiclesManager
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }catch (PDOException|Exception|Error $e) {
-            $this->createLog("VehicleManager", $e);
+            $this->createLog("VehiclesManager", $e);
             return [];
         }
     }

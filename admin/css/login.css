@@ -1,0 +1,333 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ===== ОСНОВНАЯ КАРТОЧКА ===== */
+.login-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.login-card {
+    background: #ffffff;
+    border-radius: 32px;
+    padding: 48px 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* ===== ХЕДЕР ===== */
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo-wrapper {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.login-logo {
+    height: 70px;
+    width: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+.login-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #0a0a0a 0%, #4a3b2c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* ===== ФОРМА ===== */
+.login-form {
+    margin-bottom: 16px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #555;
+    letter-spacing: 0.3px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    width: 20px;
+    height: 20px;
+    stroke: #aaa;
+    transition: stroke 0.2s;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.2s;
+    background: #fafafa;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: #d4a373;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+}
+
+.input-wrapper input:focus + .input-icon {
+    stroke: #d4a373;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.toggle-password:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.toggle-password svg {
+    width: 20px;
+    height: 20px;
+    stroke: #888;
+    transition: stroke 0.2s;
+}
+
+.toggle-password:hover svg {
+    stroke: #d4a373;
+}
+
+/* Убираем стандартный браузерный глазик */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container,
+input[type="password"]::-webkit-reveal {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Для Firefox */
+input[type="password"]::-moz-reveal {
+    display: none !important;
+}
+
+/* Для Edge/IE */
+input[type="password"]::-ms-reveal {
+    display: none !important;
+}
+
+.input-hint {
+    position: absolute;
+    right: 0;
+    top: -28px;
+    font-size: 0.7rem;
+    color: #d4a373;
+    background: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 10;
+    animation: fadeInOut 2s ease forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(5px); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-5px); visibility: hidden; }
+}
+
+/* ===== КНОПКА ВХОДА ===== */
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #2a2a2a 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #d4a373 0%, #b5835a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(212, 163, 115, 0.4);
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+/* ===== ФУТЕР ФОРМЫ ===== */
+.login-footer {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.forgot-password {
+    display: flex;
+    font-size: 0.85rem;
+    color: #888;
+    line-height: 1.4;
+}
+
+/* ===== ИНФОРМАЦИОННЫЙ БЛОК ===== */
+.login-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid #eee;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.info-item svg {
+    stroke: #d4a373;
+    flex-shrink: 0;
+}
+
+/* ===== КОПИРАЙТ ===== */
+.login-copyright {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #666;
+    z-index: 1;
+}
+
+/* ===== АНИМАЦИИ ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 640px) {
+    .login-card {
+        padding: 32px 24px;
+    }
+
+    .login-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .login-logo {
+        height: 55px;
+    }
+
+    .forgot-password {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .forgot-password span {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 24px 20px;
+    }
+
+    .login-header {
+        margin-bottom: 28px;
+    }
+
+    .input-wrapper input {
+        padding: 12px 12px 12px 44px;
+    }
+}

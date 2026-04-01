@@ -48,8 +48,6 @@ $data = [
     'similar_vehicles' => getSimilarVehicles($vehiclesManager, $vehicle['id'], $vehicle['category']) // функция для похожих авто
 ];
 
-var_dump(getSimilarVehicles($vehiclesManager, $vehicle['id'], $vehicle['category']));
-
 // Рендерим шаблон
 echo $twig->render('vehicle.twig', $data);
 
