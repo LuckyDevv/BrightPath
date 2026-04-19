@@ -1,0 +1,168 @@
+/* ===== ХЛЕБНЫЕ КРОШКИ ===== */
+.breadcrumbs {
+    background-color: #f5f5f5;
+    padding: 12px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.breadcrumbs a {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+    color: #d4a373;
+}
+
+.breadcrumbs .separator {
+    color: #999;
+    margin: 0 8px;
+    font-size: 1rem;
+}
+
+.breadcrumbs .current {
+    color: #0a0a0a;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* ===== ДЕТАЛЬНАЯ СТРАНИЦА АГЕНТА ===== */
+.agent-detail {
+    padding: 50px 0 70px;
+    background-color: #ffffff;
+}
+
+.agent-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 50px;
+}
+
+/* Фото агента */
+.agent-photo {
+    position: sticky;
+    top: 100px;
+}
+
+.agent-avatar {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #d4a373 0%, #b5835a 100%);
+}
+
+/* Информация */
+.agent-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin-bottom: 10px;
+}
+
+.agent-position {
+    font-size: 1.2rem;
+    color: #d4a373;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Статистика */
+.agent-stats {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #d4a373;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Описание и биография */
+.agent-description,
+.agent-biography {
+    margin-bottom: 30px;
+}
+
+.agent-description h3,
+.agent-biography h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin-bottom: 15px;
+}
+
+.agent-description p,
+.agent-biography p {
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.agent-actions {
+    margin-top: 30px;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .agent-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .agent-photo {
+        position: static;
+        text-align: center;
+    }
+
+    .agent-avatar {
+        max-width: 300px;
+    }
+
+    .agent-name {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .agent-position {
+        text-align: center;
+    }
+
+    .agent-stats {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .agent-stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .agent-name {
+        font-size: 1.6rem;
+    }
+}

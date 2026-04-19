@@ -793,21 +793,33 @@
         </div>
     </div>
 </section>
-
 <!-- Футер -->
 <footer class="footer">
     <div class="container">
         <div class="footer-col">
+            <img src="logo.png" alt="Светлый Путь" style="height: 40px; margin-bottom: 15px;">
             <h4>Светлый Путь</h4>
             <p>Ритуальное агентство в Одинцово. Работаем с 2002 года.</p>
         </div>
         <div class="footer-col">
             <h4>Разделы</h4>
             <ul>
-                <li><a href="#services">Услуги</a></li>
-                <li><a href="#pricing">Цены</a></li>
-                <li><a href="#transport">Автопарк</a></li>
-                <li><a href="#experience">О нас</a></li>
+                <li><a href="goods/">Товары</a></li>
+                <li><a href="services/">Услуги</a></li>
+                <li><a href="agents/">Агенты</a></li>
+                <li><a href="calculator/">Калькулятор</a></li>
+                <li><a href="autopark/">Автопарк</a></li>
+                <li><a href="profile/">Профиль</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Информация</h4>
+            <ul>
+                <li><a href="politics">Правовая информация</a></li>
+                <li><a href="politics/privacy/">Политика конфиденциальности</a></li>
+                <li><a href="politics/treatment/">Политика обработки данных</a></li>
+                <li><a href="politics/terms/">Пользовательское соглашение</a></li>
+                <li><a href="politics/cookies/">Политика cookie</a></li>
             </ul>
         </div>
         <div class="footer-col">

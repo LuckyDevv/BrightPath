@@ -1,0 +1,753 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ===== ДЕКОРАТИВНЫЕ ЭЛЕМЕНТЫ ===== */
+.login-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.decoration-shape {
+    position: absolute;
+    background: rgba(212, 163, 115, 0.05);
+    border-radius: 50%;
+    animation: float 20s infinite ease-in-out;
+}
+
+.shape-1 {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    right: -100px;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 500px;
+    height: 500px;
+    bottom: -250px;
+    left: -200px;
+    animation-delay: -5s;
+}
+
+.shape-3 {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    right: 20%;
+    animation-delay: -10s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(5deg); }
+}
+
+/* ===== ОСНОВНАЯ КАРТОЧКА ===== */
+.login-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.login-card {
+    background: #ffffff;
+    border-radius: 32px;
+    padding: 48px 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* ===== ХЕДЕР ===== */
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo-wrapper {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.login-logo {
+    height: 70px;
+    width: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+.login-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #0a0a0a 0%, #4a3b2c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* ===== СТРАНИЦЫ АВТОРИЗАЦИИ ===== */
+.auth-page {
+    display: none;
+}
+
+.auth-page.active {
+    display: block;
+}
+
+/* ===== ФОРМА ЛОГИНА ===== */
+.login-form {
+    margin-bottom: 16px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #555;
+    letter-spacing: 0.3px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    width: 20px;
+    height: 20px;
+    stroke: #aaa;
+    transition: stroke 0.2s;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.2s;
+    background: #fafafa;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: #d4a373;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+}
+
+.input-wrapper input:focus + .input-icon {
+    stroke: #d4a373;
+}
+
+/* Кнопка показа пароля */
+.toggle-password {
+    position: absolute;
+    right: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.toggle-password:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.toggle-password svg {
+    width: 20px;
+    height: 20px;
+    stroke: #888;
+    transition: stroke 0.2s;
+}
+
+.toggle-password:hover svg {
+    stroke: #d4a373;
+}
+
+/* Убираем стандартный браузерный глазик */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container,
+input[type="password"]::-webkit-reveal {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+input[type="password"]::-moz-reveal {
+    display: none !important;
+}
+
+input[type="password"]::-ms-reveal {
+    display: none !important;
+}
+
+/* Подсказка */
+.input-hint {
+    position: absolute;
+    right: 0;
+    top: -28px;
+    font-size: 0.7rem;
+    color: #d4a373;
+    background: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 10;
+    animation: fadeInOut 2s ease forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(5px); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-5px); visibility: hidden; }
+}
+
+/* Кнопка входа */
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #2a2a2a 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #d4a373 0%, #b5835a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(212, 163, 115, 0.4);
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+/* Футер формы */
+.login-footer {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.forgot-password {
+    display: flex;
+    font-size: 0.85rem;
+    color: #888;
+    line-height: 1.4;
+}
+
+/* Информационный блок */
+.login-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid #eee;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.info-item svg {
+    stroke: #d4a373;
+    flex-shrink: 0;
+}
+
+/* ===== СТРАНИЦЫ 2FA ===== */
+
+/* Шаги настройки */
+.setup-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #666;
+}
+
+.step.active .step-number {
+    background: #d4a373;
+    color: white;
+}
+
+.step-text {
+    font-size: 0.8rem;
+    color: #666;
+    text-align: center;
+}
+
+.step.active .step-text {
+    color: #0a0a0a;
+    font-weight: 500;
+}
+
+/* Контент шагов */
+.setup-step {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.setup-step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Выбор приложения */
+.app-options h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #666;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.app-item {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.app-item:hover {
+    border-color: #d4a373;
+    transform: translateY(-2px);
+}
+
+.app-item svg {
+    margin-bottom: 8px;
+    stroke: #d4a373;
+}
+
+.app-item span {
+    display: block;
+    font-size: 0.85rem;
+    color: #333;
+}
+
+/* QR-код */
+.qr-section {
+    text-align: center;
+}
+
+.qr-code {
+    display: inline-block;
+    padding: 15px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.qr-code img {
+    width: 180px;
+    height: 180px;
+}
+
+.qr-hint {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+}
+
+.manual-toggle {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.btn-manual {
+    background: none;
+    border: none;
+    color: #d4a373;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.btn-manual:hover {
+    text-decoration: underline;
+}
+
+/* Ручной ввод ключа */
+.manual-section {
+    background: #fafafa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.manual-section h4 {
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.manual-data {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #eee;
+}
+
+.manual-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.manual-item:last-child {
+    margin-bottom: 0;
+}
+
+.manual-label {
+    font-weight: 500;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.manual-value {
+    font-family: monospace;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.btn-copy {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px 8px;
+}
+
+.step-next {
+    width: 100%;
+    padding: 12px;
+    background: #d4a373;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.step-next:hover {
+    background: #b5835a;
+}
+
+/* Страница проверки 2FA */
+.verify-content {
+    text-align: center;
+}
+
+.auth-icon {
+    margin-bottom: 25px;
+}
+
+.code-input-wrapper {
+    margin-bottom: 25px;
+}
+
+.code-input-wrapper label {
+    display: block;
+    margin-bottom: 15px;
+    font-weight: 500;
+    color: #555;
+}
+
+.code-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.code-digit {
+    width: 50px;
+    height: 60px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: white;
+    transition: all 0.2s;
+}
+
+.code-digit:focus {
+    outline: none;
+    border-color: #d4a373;
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.1);
+}
+
+.verify-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.btn-verify {
+    flex: 1;
+    padding: 12px;
+    background: #d4a373;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-verify:hover {
+    background: #b5835a;
+}
+
+.btn-back {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-back:hover {
+    border-color: #d4a373;
+    color: #d4a373;
+}
+
+.verify-footer {
+    text-align: center;
+}
+
+.info-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+.recovery-link {
+    font-size: 0.85rem;
+    color: #d4a373;
+    text-decoration: none;
+}
+
+.recovery-link:hover {
+    text-decoration: underline;
+}
+
+/* ===== КОПИРАЙТ ===== */
+.login-copyright {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #666;
+    z-index: 1;
+}
+
+/* ===== АНИМАЦИИ ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 640px) {
+    .login-card {
+        padding: 32px 24px;
+    }
+
+    .login-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .login-logo {
+        height: 55px;
+    }
+
+    .forgot-password {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .step-text {
+        font-size: 0.7rem;
+    }
+
+    .code-digit {
+        width: 45px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 24px 20px;
+    }
+
+    .login-header {
+        margin-bottom: 28px;
+    }
+
+    .input-wrapper input {
+        padding: 12px 12px 12px 44px;
+    }
+
+    .app-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .setup-steps {
+        padding: 0;
+    }
+
+    .code-inputs {
+        gap: 6px;
+    }
+
+    .code-digit {
+        width: 42px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+
+    .verify-actions {
+        flex-direction: column;
+    }
+}

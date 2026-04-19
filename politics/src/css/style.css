@@ -1,0 +1,197 @@
+/* ===== ПРАВОВЫЕ СТРАНИЦЫ ===== */
+.privacy-content {
+    padding: 40px 0 70px;
+    background-color: #fafafa;
+}
+
+.privacy-card {
+    background: white;
+    border-radius: 24px;
+    padding: 50px;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.privacy-card h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin: 30px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #d4a373;
+}
+
+.privacy-card h2:first-of-type {
+    margin-top: 0;
+}
+
+.privacy-card p {
+    color: #444;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.privacy-card ul {
+    margin: 15px 0 20px 30px;
+}
+
+.privacy-card li {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.contact-info {
+    background: #fafafa;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+}
+
+.contact-info a {
+    color: #d4a373;
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+
+.privacy-footer {
+    margin-top: 40px;
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+    .privacy-card {
+        padding: 25px;
+    }
+
+    .privacy-card h2 {
+        font-size: 1.3rem;
+    }
+
+    .privacy-card ul {
+        margin-left: 20px;
+    }
+}
+/* ===== ГЛАВНАЯ СТРАНИЦА ПРАВОВОЙ ИНФОРМАЦИИ ===== */
+.politics-section {
+    padding: 40px 0 70px;
+    background-color: #fafafa;
+}
+
+.politics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.politics-card {
+    background: white;
+    border-radius: 20px;
+    padding: 35px 30px;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #eee;
+    transition: all 0.3s;
+    display: block;
+    text-align: center;
+}
+
+.politics-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #d4a373;
+}
+
+.card-icon {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.card-icon svg {
+    transition: transform 0.3s;
+}
+
+.politics-card:hover .card-icon svg {
+    transform: scale(1.1);
+}
+
+.politics-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin-bottom: 12px;
+}
+
+.politics-card p {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.card-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #d4a373;
+    transition: color 0.2s;
+}
+
+.politics-card:hover .card-link {
+    color: #b5835a;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .politics-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .politics-card {
+        padding: 25px 20px;
+    }
+
+    .politics-card h3 {
+        font-size: 1.2rem;
+    }
+}
+/* ===== ХЛЕБНЫЕ КРОШКИ ===== */
+.breadcrumbs {
+    background-color: #f5f5f5;
+    padding: 12px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.breadcrumbs a {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+    color: #d4a373;
+}
+
+.breadcrumbs .separator {
+    color: #999;
+    margin: 0 8px;
+    font-size: 1rem;
+}
+
+.breadcrumbs .current {
+    color: #0a0a0a;
+    font-size: 0.9rem;
+    font-weight: 500;
+}

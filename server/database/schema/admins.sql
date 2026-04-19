@@ -5,11 +5,11 @@ CREATE TABLE IF NOT EXISTS `admin_users` (
     `role` ENUM('admin', 'manager', 'operator') NOT NULL DEFAULT 'operator' COMMENT 'Роль пользователя',
     `is_locked` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Статус блокировки аккаунта',
     `totp_secret` VARCHAR(255) NULL COMMENT 'Секретный ключ для 2FA (TOTP)',
+    `is_2fa_enabled` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Включена ли двухфакторная аутентификация',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата создания аккаунта',
     `password_updated_at` TIMESTAMP NULL COMMENT 'Дата последнего обновления пароля',
     `last_login_at` TIMESTAMP NULL COMMENT 'Дата последнего входа',
     `last_login_ip` VARCHAR(45) NULL COMMENT 'IP адрес последнего входа',
-
     INDEX idx_login (`login`),
     INDEX idx_role (`role`),
     INDEX idx_is_locked (`is_locked`)

@@ -88,6 +88,11 @@ if (mobileSearchInput && searchInput) {
     searchInput.addEventListener('input', filterVehicles);
 }
 
+function plural(number, titles) {
+    let cases = [2, 0, 1, 1, 1, 2];
+    return titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
+}
+
 // ===== ФУНКЦИЯ РЕНДЕРИНГА КАРТОЧЕК =====
 function renderVehicles(vehicles) {
     vehiclesGrid.innerHTML = '';
@@ -118,6 +123,8 @@ function renderVehicles(vehicles) {
             default: categoryName = vehicle.category;
         }
 
+        let declension = ['место', 'места', 'мест'];
+        let seats = `${vehicle.seats} ${plural(vehicle.seats, declension)}`
         card.innerHTML = `
             <div class="vehicle-image">
                 <img src="../src/images/vehicles/${vehicle.image_path}/main.jpg" alt="${vehicle.name}" onerror="this.src='../src/images/placeholder.jpg'">
@@ -126,36 +133,25 @@ function renderVehicles(vehicles) {
                 <span class="vehicle-category">${categoryName}</span>
                 <h3 class="vehicle-name">${vehicle.name}</h3>
                 <div class="vehicle-details">
-                    <span class="vehicle-detail">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                            <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <span class="vehicle-detail">   
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.5 20V22C22.5 22.5523 22.0523 23 21.5 23H7.59646C6.66266 23 5.85314 22.3538 5.64619 21.4432L1.27764 2.22162C1.13542 1.59586 1.61105 1 2.25277 1H5.70799C6.17204 1 6.57512 1.31925 6.6814 1.77096L10.5 18H20.5C21.6046 18 22.5 18.8954 22.5 20Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6.96729 3H8.99999C9.55228 3 10 3.44772 10 4V6L8 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M13.5 14.375H9.625H7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        ${vehicle.year} г.
+                        ${seats}
                     </span>
-                    <span class="vehicle-detail">
-                        <svg viewBox="0 0 24 24">
-                            <rect x="4" y="8" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                            <circle cx="8" cy="16" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                            <circle cx="16" cy="16" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                        </svg>
-                        ${vehicle.seats} мест
-                    </span>
-                    <span class="vehicle-detail">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                            <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                    <span class="vehicle-detail">               
+                        <svg stroke-width="2" stroke="currentColor" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-width="40" stroke="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M275.002 258C275.002 304.5 237.221 336 201.926 336C166.631 336 123.002 297.5 123.002 267C123.002 185.5 196.029 173 196.029 64C201.926 163 275.002 202 275.002 258Z" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         ${vehicle.color}
                     </span>
-                    <span class="vehicle-detail">
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <rect x="2" y="7" width="20" height="12" rx="2" stroke="currentColor" fill="none" stroke-width="1.5"/>
-                            <circle cx="7" cy="17" r="2" stroke="currentColor" fill="none" stroke-width="1.5"/>
-                            <circle cx="17" cy="17" r="2" stroke="currentColor" fill="none" stroke-width="1.5"/>
-                            <text x="12" y="16" text-anchor="middle" fill="#d4a373" font-size="8" font-weight="bold">${vehicle.stock}</text>
+                    <span class="vehicle-detail" style="margin-left: 4px">    
+                        <svg stroke="currentColor" stroke-width="0.7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 20H4.6C4.03995 20 3.75992 20 3.54601 19.891C3.35785 19.7951 3.20487 19.6422 3.10899 19.454C3 19.2401 3 18.9601 3 18.4V9.0398C3 8.66343 3 8.47524 3.05919 8.31095C3.1115 8.16573 3.19673 8.03458 3.30819 7.9278C3.43428 7.80699 3.60625 7.73056 3.95018 7.5777L12 4L20.0498 7.5777C20.3938 7.73056 20.5657 7.80699 20.6918 7.9278C20.8033 8.03458 20.8885 8.16573 20.9408 8.31095C21 8.47524 21 8.66343 21 9.0398V18.4C21 18.9601 21 19.2401 20.891 19.454C20.7951 19.6422 20.6422 19.7951 20.454 19.891C20.2401 20 19.9601 20 19.4 20H17M7 20H17M7 20V14M17 20V14M7 14V10H17V14M7 14H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        ${vehicle.stock} шт.
+                        ${vehicle.available} шт.
                     </span>
                 </div>
                 <p class="vehicle-description">${vehicle.description}</p>
@@ -179,8 +175,7 @@ function filterVehicles() {
     if (searchTerm) {
         filtered = filtered.filter(v =>
             v.name.toLowerCase().includes(searchTerm) ||
-            v.description.toLowerCase().includes(searchTerm) ||
-            v.category.toLowerCase().includes(searchTerm)
+            v.description.toLowerCase().includes(searchTerm)
         );
     }
 
@@ -193,7 +188,7 @@ function filterVehicles() {
     }
 
     if (category !== 'all') {
-        filtered = filtered.filter(v => v.category === category);
+        filtered = filtered.filter(v => v.category == category);
     }
 
     // ===== ФИЛЬТР ПО ЦЕНЕ (десктоп + мобильный) =====
@@ -267,11 +262,8 @@ function filterVehicles() {
         case 'yearAsc':
             filtered.sort((a, b) => a.year - b.year);
             break;
-        case 'popular':
-            filtered.sort((a, b) => (b.orders || 0) - (a.orders || 0));
-            break;
         default:
-            filtered.sort((a, b) => a.id - b.id);
+            filtered.sort((a, b) => (b.orders || 0) - (a.orders || 0));
     }
 
     renderVehicles(filtered);

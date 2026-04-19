@@ -104,36 +104,12 @@
                         <h3>Характеристики</h3>
                         <div class="specs-grid">
                             <div class="spec-item">
-                                <span class="spec-label">Год выпуска</span>
-                                <span class="spec-value">{{ vehicle.creation_year }}</span>
-                            </div>
-                            <div class="spec-item">
                                 <span class="spec-label">Цвет</span>
                                 <span class="spec-value">{{ vehicle.color }}</span>
                             </div>
                             <div class="spec-item">
-                                <span class="spec-label">Коробка передач</span>
-                                <span class="spec-value">{{ vehicle.transmission_text }}</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label">Тип топлива</span>
-                                <span class="spec-value">{{ vehicle.fuel_text }}</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label">Привод</span>
-                                <span class="spec-value">{{ vehicle.drive_type }}</span>
-                            </div>
-                            <div class="spec-item">
                                 <span class="spec-label">Количество мест</span>
                                 <span class="spec-value">{{ vehicle.seats }}</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label">Пробег</span>
-                                <span class="spec-value">{{ vehicle.mileage|number_format(0, '', ' ') }} км</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label">VIN</span>
-                                <span class="spec-value">{{ vehicle.vin }}</span>
                             </div>
                         </div>
                     </div>
@@ -178,16 +154,29 @@
 <footer class="footer">
     <div class="container">
         <div class="footer-col">
+            <img src="logo.png" alt="Светлый Путь" style="height: 40px; margin-bottom: 15px;">
             <h4>Светлый Путь</h4>
             <p>Ритуальное агентство в Одинцово. Работаем с 2002 года.</p>
         </div>
         <div class="footer-col">
             <h4>Разделы</h4>
             <ul>
-                <li><a href="#services">Услуги</a></li>
-                <li><a href="#pricing">Цены</a></li>
-                <li><a href="#transport">Автопарк</a></li>
-                <li><a href="#experience">О нас</a></li>
+                <li><a href="goods/">Товары</a></li>
+                <li><a href="services/">Услуги</a></li>
+                <li><a href="agents/">Агенты</a></li>
+                <li><a href="calculator/">Калькулятор</a></li>
+                <li><a href="autopark/">Автопарк</a></li>
+                <li><a href="profile/">Профиль</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Информация</h4>
+            <ul>
+                <li><a href="politics">Правовая информация</a></li>
+                <li><a href="politics/privacy/">Политика конфиденциальности</a></li>
+                <li><a href="politics/treatment/">Политика обработки данных</a></li>
+                <li><a href="politics/terms/">Пользовательское соглашение</a></li>
+                <li><a href="politics/cookies/">Политика cookie</a></li>
             </ul>
         </div>
         <div class="footer-col">

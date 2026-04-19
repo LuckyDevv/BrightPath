@@ -76,7 +76,7 @@ class ComposerStaticInita8a911115fdc661dcf163a5fce9be2fb
         array (
             'tpl' =>
             array (
-                0 => __DIR__ . '/../..' . '/server/tpl',
+                0 => __DIR__ . '/../..' . '/server/twig',
             ),
         ),
         'm' =>
@@ -84,6 +84,13 @@ class ComposerStaticInita8a911115fdc661dcf163a5fce9be2fb
             'managers' =>
             array (
                 0 => __DIR__ . '/../..' . '/server/database',
+            ),
+        ),
+        'l' =>
+        array (
+            'lib' =>
+            array (
+                0 => __DIR__ . '/../..' . '/server',
             ),
         ),
         'e' =>

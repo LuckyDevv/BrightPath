@@ -6,7 +6,8 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'tpl' => array($baseDir . '/server/tpl'),
+    'tpl' => array($baseDir . '/server/twig'),
     'managers' => array($baseDir . '/server/database'),
+    'lib' => array($baseDir . '/server'),
     'executors' => array($baseDir . '/server/database'),
 );

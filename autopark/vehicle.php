@@ -15,7 +15,7 @@ $twig = new Environment($loader, [
 $vehiclesManager = new VehiclesManager();
 
 $vehicle_id = $_GET['id'];
-if ($vehicle_id == null) {
+if ($vehicle_id == null || !is_numeric($vehicle_id)) {
     notFound($twig, $vehiclesManager);
 }
 $vehicle = $vehiclesManager->getVehicleById($vehicle_id);
@@ -35,14 +35,8 @@ $data = [
         'category_name' => getCategoryName($vehicle['category']), // функция для определения типа
         'price' => $vehicle['price'],
         'available_stock' => $vehicle['total_stock'] - $vehicle['reserved_stock'],
-        'creation_year' => $vehicle['creation_year'],
         'color' => $vehicle['color'],
-        'transmission_text' => getTransmissionText($vehicle['transmission']),
-        'fuel_text' => getFuelText($vehicle['fuel']),
-        'drive_type' => 'Задний',
         'seats' => $vehicle['seats'],
-        'mileage' => $vehicle['mileage'] ?? 15000,
-        'vin' => $vehicle['vin'] ?? 'WDD0000000XXXXXX',
         'description_full' => $vehicle['description_full']
     ],
     'similar_vehicles' => getSimilarVehicles($vehiclesManager, $vehicle['id'], $vehicle['category']) // функция для похожих авто
@@ -80,28 +74,6 @@ function getImages($imagesPath): array
         }
     }
     return $result;
-}
-
-function getTransmissionText($code): string
-{
-    $map = [
-        1 => 'Механика',
-        2 => 'Автомат',
-        3 => 'Робот',
-        4 => 'Вариатор'
-    ];
-    return $map[$code] ?? 'Автомат';
-}
-
-function getFuelText($code): string
-{
-    $map = [
-        1 => 'Бензин',
-        2 => 'Дизель',
-        3 => 'Электро',
-        4 => 'Гибрид'
-    ];
-    return $map[$code] ?? 'Бензин';
 }
 
 function getSimilarVehicles(VehiclesManager $vehiclesManager, int $currentId, int $category): array

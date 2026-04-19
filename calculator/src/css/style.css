@@ -1,0 +1,491 @@
+/* ===== КАЛЬКУЛЯТОР ===== */
+.calculator-section {
+    padding: 40px 0 70px;
+    background-color: #fafafa;
+}
+
+.calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 30px;
+}
+
+/* Левая колонка - форма */
+.calculator-form {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* Категория */
+.calc-category {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.calc-category:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.category-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #0a0a0a;
+}
+
+.btn-add-item {
+    background: none;
+    border: 1px solid #d4a373;
+    color: #d4a373;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-add-item:hover {
+    background: #d4a373;
+    color: white;
+}
+
+/* Элементы внутри категории */
+.category-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.empty-items {
+    color: #999;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 15px;
+    background: #fafafa;
+    border-radius: 10px;
+}
+
+.calc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #fafafa;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    transition: all 0.2s;
+}
+
+.calc-item:hover {
+    border-color: #d4a373;
+}
+
+.calc-item-info {
+    flex: 1;
+}
+
+.calc-item-name {
+    font-weight: 600;
+    color: #0a0a0a;
+    margin-bottom: 4px;
+}
+
+.calc-item-price {
+    font-size: 0.85rem;
+    color: #d4a373;
+    font-weight: 500;
+}
+
+.calc-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.calc-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quantity-btn {
+    width: 28px;
+    height: 28px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+    border-color: #d4a373;
+    color: #d4a373;
+}
+
+.quantity-value {
+    min-width: 30px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.calc-item-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #c62828;
+    font-size: 1.2rem;
+    padding: 0 4px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.calc-item-remove:hover {
+    opacity: 1;
+}
+
+/* Правая колонка - итог */
+.calculator-total {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.calculator-total h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.total-amount {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #d4a373;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.total-details {
+    margin-bottom: 25px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.total-details p {
+    color: #666;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 15px;
+}
+
+.total-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 0.9rem;
+    border-bottom: 1px dashed #eee;
+}
+
+.total-item-name {
+    color: #555;
+}
+
+.total-item-price {
+    font-weight: 500;
+    color: #0a0a0a;
+}
+
+.total-grand {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-top: 2px solid #d4a373;
+    margin-top: 10px;
+}
+
+.btn-order {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    background: #0a0a0a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-order:hover {
+    background: #d4a373;
+    transform: translateY(-2px);
+}
+
+.calc-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-reset-calc {
+    background: none;
+    border: 1px solid #ddd;
+    color: #999;
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-reset-calc:hover {
+    border-color: #c62828;
+    color: #c62828;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .calculator-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .calculator-total {
+        position: static;
+        order: -1;
+    }
+}
+
+@media (max-width: 576px) {
+    .calculator-form {
+        padding: 20px;
+    }
+
+    .category-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .calc-item {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .calc-item-actions {
+        justify-content: center;
+    }
+
+    .total-amount {
+        font-size: 2rem;
+    }
+}
+/* ===== МОДАЛЬНОЕ ОКНО ВЫБОРА ===== */
+.selection-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selection-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.selection-modal-container {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.selection-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.selection-modal-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.selection-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+}
+
+.selection-modal-content {
+    padding: 15px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.selection-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.selection-item-info {
+    flex: 1;
+}
+
+.selection-item-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.selection-item-price {
+    font-size: 0.85rem;
+    color: #d4a373;
+}
+
+.selection-item-add {
+    background: #d4a373;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.selection-item-add:hover {
+    background: #b5835a;
+}
+/* ===== ПРЕСЕТЫ ТАРИФОВ ===== */
+.presets-section {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.presets-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.presets-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+}
+
+.preset-card {
+    background: #fafafa;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #eee;
+    transition: all 0.2s;
+}
+
+.preset-card:hover {
+    transform: translateY(-3px);
+    border-color: #d4a373;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.preset-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin-bottom: 5px;
+}
+
+.preset-price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #d4a373;
+    margin-bottom: 5px;
+}
+
+.preset-desc {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.btn-preset {
+    width: 100%;
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-preset:hover {
+    background: #d4a373;
+    border-color: #d4a373;
+    color: white;
+}
+
+@media (max-width: 992px) {
+    .presets-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .presets-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.subtitle {
+    font-size: 1.1rem;
+    color: #666;
+}

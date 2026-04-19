@@ -40,6 +40,22 @@ class VehiclesManager
         }
     }
 
+    public function getImagePath(int $id): string|false
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `image_path` FROM `vehicles` WHERE `id`=:id");
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $ans = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (is_array($ans)) {
+                return $ans["image_path"];
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+        }
+        return false;
+    }
+
     public function deleteVehicleById(int $id): bool
     {
         try {
@@ -52,12 +68,21 @@ class VehiclesManager
         }
     }
 
-    public function getVehicleById(int $idVehicle): array
+    public function getVehicleById(int $idVehicle, bool $ignoreActivity = false): array
     {
         try {
-            $stmt = $this->db->prepare($this->commands->getVehicleById());
+            $command = $this->commands->getVehicleById();
+            if ($ignoreActivity) {
+                $command = str_replace(" AND `is_active`=1", '', $command);
+            }
+            $stmt = $this->db->prepare($command);
             $stmt->execute([':id' => $idVehicle]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $ans = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!is_array($ans)) {
+                return [];
+            }else{
+                return $ans;
+            }
         } catch (PDOException|Exception|Error $e) {
             $this->createLog("VehiclesManager", $e);
             return [];
@@ -68,7 +93,7 @@ class VehiclesManager
     {
         try {
             // Проверка обязательных полей
-            $required = ['name', 'image_path', 'seats', 'creation_year', 'color', 'price'];
+            $required = ['name', 'image_path', 'seats', 'color', 'price'];
             foreach ($required as $field) {
                 if (empty($data[$field])) {
                     throw new Exception("Поле '$field' обязательно для заполнения");
@@ -77,19 +102,12 @@ class VehiclesManager
 
             $stmt = $this->db->prepare($this->commands->addVehicle());
 
-
-
             $stmt->execute([
                 ':name' => $data['name'],
                 ':image_path' => rtrim($data['image_path'], '/'),
                 ':category' => $data['category'] ?? 1,
                 ':seats' => $data['seats'] ?? 2,
-                ':creation_year' => $data['creation_year'],
                 ':color' => $data['color'],
-                ':mileage' => $data['mileage'] ?? 0,
-                ':vin' => $data['vin'] ?? '',
-                ':transmission' => $data['transmission'] ?? 1,
-                ':fuel' => $data['fuel'] ?? 1,
                 ':description_short' => $data['description_short'] ?? null,
                 ':description_full' => $data['description_full'] ?? null,
                 ':price' => $data['price'],
@@ -105,6 +123,42 @@ class VehiclesManager
             $this->createLog("VehiclesManager", $e);
             return false;
         }
+    }
+
+    public function changeVehicle(int $vehicleId, array $data): bool
+    {
+        if (!empty($data)) {
+            $setParts = [];
+            $params = [];
+            $fields = [];
+            foreach ($data as $field => $value) {
+                $fields[] = ':'.$field;
+                $setParts[] = "`$field` = :$field";
+                $params[] = $value;
+            }
+            $sql = "UPDATE `vehicles` SET " . implode(', ', $setParts) . " WHERE `id` = :id;";
+            try {
+                $stmt = $this->db->prepare($sql);
+                $index_r = 0;
+                $stmt->bindValue(":id", $vehicleId, PDO::PARAM_INT);
+                foreach ($params as $param) {
+                    if (is_int($param)) {
+                        $stmt->bindValue("$fields[$index_r]", $param, PDO::PARAM_INT);
+                    }
+                    if (is_bool($param)) {
+                        $stmt->bindValue("$fields[$index_r]", $param, PDO::PARAM_BOOL);
+                    }
+                    if (is_string($param)) {
+                        $stmt->bindValue("$fields[$index_r]", $param);
+                    }
+                    $index_r++;
+                }
+                return $stmt->execute();
+            }catch (PDOException|Exception|Error $e) {
+                $this->createLog("VehiclesManager", $e);
+            }
+        }
+        return false;
     }
 
     public function getPopular(): array
@@ -150,5 +204,17 @@ class VehiclesManager
     {
         $text = "[" . date("d.m.Y H:i:s") . "] Произошла ошибка в ".$className.": ".$exception->getMessage().". На строке ".$exception->getLine().", файл: ".$exception->getFile()."\n\n";
         file_put_contents(__DIR__.'/../../logs/'.$className.'_Errors.log', $text, FILE_APPEND);
+    }
+
+    // ФУНКЦИЯ ДЛЯ ЛОГОВ ПРИ РАЗРАБОТКЕ
+    public function createCustomLog(string $text): void
+    {
+        $text = "[" . date("d.m.Y H:i:s") . "] Лог: ".$text."\n\n";
+        file_put_contents(__DIR__.'/../../logs/custom_log.log', $text, FILE_APPEND);
+    }
+
+    public function getLastInsertId(): false|string
+    {
+        return $this->db->lastInsertId();
     }
 }

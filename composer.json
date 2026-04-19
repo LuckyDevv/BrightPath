@@ -4,14 +4,15 @@
     "twig/twig": "^3.0",
     "egulias/email-validator": "^4.0.1",
     "ext-pdo": "*",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "ext-openssl": "*"
   },
   "autoload": {
     "psr-0": {
       "executors": "server/database",
       "managers": "server/database",
       "tpl": "server/twig",
-      "": "server"
+      "lib": "server"
     }
   }
 }

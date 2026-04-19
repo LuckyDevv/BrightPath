@@ -1,1 +1,1 @@
-SELECT `is_locked` FROM `admin_users` WHERE `login`=:login AND `password_hash`=:password_hash;
+SELECT `is_locked`,`password_hash`,`is_2fa_enabled`,`totp_secret` FROM `admin_users` WHERE `login`=:login;

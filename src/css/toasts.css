@@ -1,0 +1,212 @@
+/* ===== TOAST УВЕДОМЛЕНИЯ ===== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast {
+    min-width: 280px;
+    max-width: 450px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    pointer-events: auto;
+
+    /* Анимация появления */
+    animation: toastSlideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Анимация скрытия */
+.toast.hiding {
+    animation: toastFadeOut 0.25s ease forwards;
+}
+
+/* Типы уведомлений */
+.toast-success {
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+    color: white;
+    border-left: 4px solid #81c784;
+}
+
+.toast-error {
+    background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+    color: white;
+    border-left: 4px solid #ef9a9a;
+}
+
+.toast-warning {
+    background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
+    color: white;
+    border-left: 4px solid #ffcc80;
+}
+
+/* Иконки */
+.toast-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    animation: iconPop 0.3s ease 0.1s both;
+}
+
+/* Контентная область */
+.toast-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Текст сообщения */
+.toast-message {
+    line-height: 1.4;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+}
+
+/* Свёрнутое состояние */
+.toast-message.collapsed {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Кнопка раскрытия */
+.toast-expand-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: fit-content;
+    font-weight: 500;
+}
+
+.toast-expand-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.02);
+}
+
+/* Кнопка закрытия */
+.toast-close {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-top: 2px;
+}
+
+.toast-close:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.1);
+}
+
+/* ===== АНИМАЦИИ ===== */
+
+/* Появление справа */
+@keyframes toastSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(100%) scale(0.8);
+    }
+    80% {
+        transform: translateX(-5%) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* Исчезновение */
+@keyframes toastFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100%) scale(0.9);
+        visibility: hidden;
+    }
+}
+
+/* Анимация иконки */
+@keyframes iconPop {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Адаптив */
+@media (max-width: 576px) {
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+
+    .toast {
+        max-width: none;
+        width: auto;
+    }
+
+    @keyframes toastSlideIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-100%) scale(0.8);
+        }
+        80% {
+            transform: translateY(5%) scale(1.02);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes toastFadeOut {
+        0% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-100%);
+            visibility: hidden;
+        }
+    }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>Настройка 2FA - Светлый Путь</title>
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="icon" href="../logo.png" type="image/png">
+</head>
+<body>
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-wrapper">
+                    <img src="../logo.png" alt="Светлый Путь" class="login-logo">
+                </div>
+                <h1>Двухфакторная аутентификация</h1>
+                <p class="subtitle">Настройте дополнительную защиту аккаунта</p>
+            </div>
+
+            <div class="setup-steps">
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Установите приложение</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Отсканируйте QR-код</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Подтвердите код</div>
+                </div>
+            </div>
+
+            <div class="setup-content">
+                <!-- Шаг 1: Приложение -->
+                <div class="setup-step active" id="step1">
+                    <div class="app-options">
+                        <h3>Установите приложение-аутентификатор</h3>
+                        <div class="app-grid">
+                            <a href="#" class="app-item">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor"/>
+                                    <path d="M8 2 L8 6 M16 2 L16 6 M2 8 L6 8 M2 16 L6 16 M18 8 L22 8 M18 16 L22 16" stroke="currentColor"/>
+                                </svg>
+                                <span>Google Authenticator</span>
+                            </a>
+                            <a href="#" class="app-item">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor"/>
+                                    <path d="M12 6v6l4 2" stroke="currentColor"/>
+                                </svg>
+                                <span>Microsoft Authenticator</span>
+                            </a>
+                            <a href="#" class="app-item">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor"/>
+                                    <path d="M12 8v4M12 16h.01" stroke="currentColor"/>
+                                </svg>
+                                <span>Authy</span>
+                            </a>
+                            <a href="#" class="app-item">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M4 4 L20 4 L20 20 L4 20 Z" stroke="currentColor"/>
+                                    <path d="M8 8 L16 8" stroke="currentColor"/>
+                                    <path d="M8 12 L14 12" stroke="currentColor"/>
+                                </svg>
+                                <span>Yandex Key</span>
+                            </a>
+                        </div>
+                        <button class="step-next">Продолжить →</button>
+                    </div>
+                </div>
+
+                <!-- Шаг 2: QR-код -->
+                <div class="setup-step" id="step2">
+                    <div class="qr-section">
+                        <div class="qr-code">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23fafafa'/%3E%3Crect x='40' y='40' width='30' height='30' fill='%230a0a0a'/%3E%3Crect x='80' y='40' width='30' height='30' fill='%230a0a0a'/%3E%3Crect x='120' y='40' width='30' height='30' fill='%230a0a0a'/%3E%3Crect x='40' y='80' width='30' height='30' fill='%230a0a0a'/%3E%3Crect x='120' y='80' width='30' height='30' fill='%230a0a0a'/%3E%3Crect x='80' y='120' width='30' height='30' fill='%230a0a0a'/%3E%3Crect x='120' y='120' width='30' height='30' fill='%230a0a0a'/%3E%3Crect x='40' y='160' width='30' height='30' fill='%230a0a0a'/%3E%3Crect x='80' y='160' width='30' height='30' fill='%230a0a0a'/%3E%3C/svg%3E" alt="QR-код">
+                        </div>
+                        <p class="qr-hint">Отсканируйте QR-код приложением-аутентификатором</p>
+                        <div class="manual-toggle">
+                            <button class="btn-manual" id="showManualBtn">Не могу отсканировать →</button>
+                        </div>
+                    </div>
+                    <div class="manual-section" id="manualSection" style="display: none;">
+                        <h4>Введите код вручную</h4>
+                        <div class="manual-data">
+                            <div class="manual-item">
+                                <span class="manual-label">Аккаунт:</span>
+                                <span class="manual-value">admin@svetlyput.ru</span>
+                            </div>
+                            <div class="manual-item">
+                                <span class="manual-label">Ключ:</span>
+                                <span class="manual-value secret-key">SVET LYPT 2FA SECRET KEY 2026</span>
+                                <button class="btn-copy" onclick="copySecret()">📋</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="step-next">Продолжить →</button>
+                </div>
+
+                <!-- Шаг 3: Подтверждение -->
+                <div class="setup-step" id="step3">
+                    <div class="verify-section">
+                        <h3>Введите код из приложения</h3>
+                        <div class="code-input">
+                            <input type="text" maxlength="6" placeholder="000000" id="verifyCode">
+                        </div>
+                        <button class="btn-verify" id="verifyBtn">Подтвердить и включить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Переключение шагов
+    let currentStep = 1;
+    const steps = document.querySelectorAll('.setup-step');
+    const stepIndicators = document.querySelectorAll('.step');
+
+    function nextStep() {
+        if (currentStep < 3) {
+            steps[currentStep - 1].classList.remove('active');
+            stepIndicators[currentStep - 1].classList.remove('active');
+            currentStep++;
+            steps[currentStep - 1].classList.add('active');
+            stepIndicators[currentStep - 1].classList.add('active');
+
+            // Прокрутка к верху
+            document.querySelector('.login-card').scrollTop = 0;
+        }
+    }
+
+    document.querySelectorAll('.step-next').forEach(btn => {
+        btn.addEventListener('click', nextStep);
+    });
+
+    // Показать/скрыть ручной ввод ключа
+    const showManualBtn = document.getElementById('showManualBtn');
+    const manualSection = document.getElementById('manualSection');
+
+    if (showManualBtn) {
+        showManualBtn.addEventListener('click', () => {
+            manualSection.style.display = 'block';
+            showManualBtn.style.display = 'none';
+        });
+    }
+
+    // Копирование ключа
+    window.copySecret = function() {
+        const secretText = document.querySelector('.secret-key');
+        const range = document.createRange();
+        range.selectNode(secretText);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        alert('Ключ скопирован в буфер обмена');
+    };
+
+    // Подтверждение 2FA
+    document.getElementById('verifyBtn')?.addEventListener('click', () => {
+        const code = document.getElementById('verifyCode').value;
+        if (code.length === 6) {
+            alert('2FA успешно включена!');
+            window.location.href = 'index.html';
+        } else {
+            alert('Введите 6-значный код');
+        }
+    });
+</script>
+</body>
+</html>
