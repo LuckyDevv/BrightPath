@@ -1,55 +1,31 @@
 <?php
 
 require_once __DIR__.'/../../vendor/autoload.php';
+require_once __DIR__ . '/apiHelper.php';
 
 use managers\VehiclesManager;
 
 $vehiclesManager = new VehiclesManager();
 
-date_default_timezone_set('Europe/Moscow');
+logging("adminVehicleHandler", "Тип запроса: ".($_POST["type"] ?? "не передано"));
 
-function logging(string $text)
-{
-    file_put_contents(__DIR__.'/post_vehicles.log', $text."\n", FILE_APPEND);
-}
-
-const JSON_OPTIONS = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING;
-function error(string $message, int $code): never
-{
-    die(json_encode(['error' => ['message' => $message, 'code' => $code]], JSON_OPTIONS));
-}
-function response(string $message, int $code, int|null $id = null): never
-{
-    if ($id !== null) {
-        die(json_encode(['response' => ['message' => $message, 'code' => $code, 'vehicleId' => $id]], JSON_OPTIONS));
-    }else{
-        die(json_encode(['response' => ['message' => $message, 'code' => $code]], JSON_OPTIONS));
-    }
-}
-
-logging("Тип запроса: ".($_POST["type"] ?? "не передано"));
-
-/**
- * @param string $path
- * @return void
- */
 function pushMainPhoto(string $path): void
 {
-    logging("Started photo uploading. Path: ".$path);
+    logging("adminVehicleHandler", "Started photo uploading. Path: ".$path);
     $tmp = $_FILES["main_photo"]["tmp_name"][0];
     $image_name = $_FILES["main_photo"]["name"][0];
     $type = $_FILES["main_photo"]["type"][0];
-    logging("Photo meta. Name: ".$tmp.", image: ".$image_name.", type: ".$type);
+    logging("adminVehicleHandler", "Photo meta. Name: ".$tmp.", image: ".$image_name.", type: ".$type);
     @mkdir($path);
     if ($type !== "image/jpeg" || !str_contains(mb_strtolower($image_name), "jpg")) {
         try {
-            logging("Converting to jpg");
+            logging("adminVehicleHandler", "Converting to jpg");
             convertToJpg($tmp, $path . "main.jpg");
         } catch (Exception $e) {
             error("Не удалось конвертировать файл: " . $e->getMessage(), 7);
         }
     } else {
-        logging("Moving tmp file");
+        logging("adminVehicleHandler", "Moving tmp file");
         if (!move_uploaded_file($tmp, $path . "main.jpg")) {
             error("Не удалось загрузить файл.", 8);
         }
@@ -78,7 +54,6 @@ switch ($_POST['type'] ?? null)
         }else{
             error("Не передан ID транспорта", 1);
         }
-        break;
     case "deleteById":
         if (!empty($_POST['vehicleId']) && is_numeric($_POST['vehicleId'])) {
             $vehicleId = (int)$_POST['vehicleId'];
@@ -100,7 +75,6 @@ switch ($_POST['type'] ?? null)
         }else{
             error("ID не передан!", 2);
         }
-        break;
     case "addVehicle":
         $_POST = json_decode($_POST['vehicleData'], true);
         if (empty($_POST['name']) || mb_strlen($_POST['name']) > 255) {
@@ -143,7 +117,7 @@ switch ($_POST['type'] ?? null)
             }
             pushMainPhoto($path);
         }
-        logging($path);
+        logging("adminVehicleHandler", $path);
         try {
             if (!empty($_FILES['additional_photos']) && !empty($_FILES["additional_photos"]["tmp_name"][0])) {
                 $img_id = 0;
@@ -164,7 +138,7 @@ switch ($_POST['type'] ?? null)
                 }
             }
         }catch(Exception|Error $e){
-            logging("An error occurred: ".$e->getmessage());
+            logging("adminVehicleHandler", "An error occurred: ".$e->getmessage());
         }
         if (empty($_POST['price']) || !is_numeric($_POST['price']) || (int)$_POST['price'] < 0) {
             error("Не введена цена", 9);
@@ -196,26 +170,26 @@ switch ($_POST['type'] ?? null)
         }else{
             $description_full = $_POST['description_full'];
         }
-        logging("Activity: ".$_POST['isActive'] ?? "None");
+        logging("adminVehicleHandler", "Activity: ".$_POST['isActive'] ?? "None");
         if (!isset($_POST['isActive']) || !is_numeric($_POST['isActive']) || ($_POST['isActive'] < 0 || $_POST['isActive'] > 1)) {
             error("Не введён статус активности", 21);
         }else{
             $isActive = $_POST['isActive'];
-            logging("Activity before parsing: ".$isActive);
+            logging("adminVehicleHandler", "Activity before parsing: ".$isActive);
         }
 
-        logging("--------------Добавление авто-----------------");
-        logging("Название автомобиля: ".$name);
-        logging("Цена: ".$price);
-        logging("Категория: ".$category);
-        logging("Вместимость: ".$seats);
-        logging("Цвет: ".$color);
-        logging("Путь к фото: ".$pathForDB);
-        logging("В наличии: ".$total_stock);
-        logging("Описание (короткое): ".$description_short);
-        logging("Описание (полное): ".$description_full);
-        logging("Статус: ".$isActive ? "Активен" : "Не активен");
-        logging("-------------------------------");
+        logging("adminVehicleHandler", "--------------Добавление авто-----------------");
+        logging("adminVehicleHandler", "Название автомобиля: ".$name);
+        logging("adminVehicleHandler", "Цена: ".$price);
+        logging("adminVehicleHandler", "Категория: ".$category);
+        logging("adminVehicleHandler", "Вместимость: ".$seats);
+        logging("adminVehicleHandler", "Цвет: ".$color);
+        logging("adminVehicleHandler", "Путь к фото: ".$pathForDB);
+        logging("adminVehicleHandler", "В наличии: ".$total_stock);
+        logging("adminVehicleHandler", "Описание (короткое): ".$description_short);
+        logging("adminVehicleHandler", "Описание (полное): ".$description_full);
+        logging("adminVehicleHandler", "Статус: ".$isActive ? "Активен" : "Не активен");
+        logging("adminVehicleHandler", "-------------------------------");
 
         $success = $vehiclesManager->addVehicle([
             "name" => $name,
@@ -296,7 +270,7 @@ switch ($_POST['type'] ?? null)
             $description_full = $_POST['description_full'];
         }
         if (!isset($_POST['isActive']) || !is_numeric($_POST['isActive']) || ($_POST['isActive'] < 0 || $_POST['isActive'] > 1)) {
-            logging("Activity before parsing: ".$_POST['isActive']);
+            logging("adminVehicleHandler", "Activity before parsing: ".$_POST['isActive']);
             error("Не введён статус активности", 21);
         }else{
             $isActive = (bool) $_POST['isActive'];
@@ -305,7 +279,7 @@ switch ($_POST['type'] ?? null)
         $path = "../../src/images/vehicles/".$oldVehicleData['image_path'];
         if (!empty($oldVehicleData) && count($oldVehicleData) > 1) {
             if (empty($_POST['existing_main_photo'])) {
-                logging("Loaded new main photo");
+                logging("adminVehicleHandler", "Loaded new main photo");
                 if (empty($_FILES["main_photo"]) || empty($_FILES["main_photo"]["name"]) || empty($_FILES["main_photo"]["name"][0])) {
                     error("Не загружено основное фото", 3);
                 }else{
@@ -323,7 +297,7 @@ switch ($_POST['type'] ?? null)
                     if ($error !== UPLOAD_ERR_OK) {
                         error("Ошибка загрузки фото: ".$errors[$error], 4);
                     }
-                    logging("Start updating main photo");
+                    logging("adminVehicleHandler", "Start updating main photo");
                     pushMainPhoto(__DIR__."/".$path."/");
                 }
             }
@@ -405,7 +379,7 @@ switch ($_POST['type'] ?? null)
                 }
 
             }catch(Exception|Error $e){
-                logging("An error occurred: ".$e->getMessage());
+                logging("adminVehicleHandler", "An error occurred: ".$e->getMessage());
             }
 
             $newVehicleData = [];
@@ -433,11 +407,11 @@ switch ($_POST['type'] ?? null)
             if ($total_stock !== $oldVehicleData['total_stock']) {
                 $newVehicleData['total_stock'] = $total_stock;
             }
-            logging("Activity: ".$isActive);
+            logging("adminVehicleHandler", "Activity: ".$isActive);
             if ($isActive !== $oldVehicleData['is_active']) {
                 $newVehicleData['is_active'] = (bool) $isActive;
             }
-            logging("Новые данные: ".json_encode($newVehicleData, JSON_UNESCAPED_UNICODE));
+            logging("adminVehicleHandler", "Новые данные: ".json_encode($newVehicleData, JSON_UNESCAPED_UNICODE));
             $ans = $vehiclesManager->changeVehicle($vehicleId, $newVehicleData);
             if ($ans) {
                 response(json_encode(["text" => 'Данные успешно сохранены', 'image_path' => $path]), 1);
@@ -449,52 +423,4 @@ switch ($_POST['type'] ?? null)
         }
     default:
         error("Неизсветный запрос", 55);
-}
-
-function convertToJpg($sourcePath, $destinationPath = null, $quality = 90)
-{
-    // Если путь назначения не указан, заменяем расширение
-    if ($destinationPath === null) {
-        $destinationPath = pathinfo($sourcePath, PATHINFO_DIRNAME) . '/'
-            . pathinfo($sourcePath, PATHINFO_FILENAME) . '.jpg';
-    }
-
-    // Получаем тип изображения
-    $imageInfo = getimagesize($sourcePath);
-    $mimeType = $imageInfo['mime'];
-
-    // Создаём ресурс в зависимости от типа
-    switch ($mimeType) {
-        case 'image/jpeg':
-            $image = imagecreatefromjpeg($sourcePath);
-            break;
-        case 'image/png':
-            $image = imagecreatefrompng($sourcePath);
-            // Сохраняем прозрачность, заменяя её на белый фон
-            $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
-            $white = imagecolorallocate($bg, 255, 255, 255);
-            imagefill($bg, 0, 0, $white);
-            imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
-            $image = $bg;
-            break;
-        case 'image/webp':
-            $image = imagecreatefromwebp($sourcePath);
-            break;
-        case 'image/gif':
-            $image = imagecreatefromgif($sourcePath);
-            break;
-        case 'image/bmp':
-            $image = imagecreatefrombmp($sourcePath);
-            break;
-        default:
-            throw new Exception("Неподдерживаемый тип изображения: $mimeType");
-    }
-
-    // Сохраняем как JPG
-    imagejpeg($image, $destinationPath, $quality);
-
-    // Освобождаем память
-    imagedestroy($image);
-
-    return $destinationPath;
 }

@@ -7,31 +7,27 @@ use executors\SessionExecutor;
 use PDO;
 use PDOException;
 
-class SessionManager {
-    protected PDO $db;
-    private SessionExecutor $commands;
-    public bool $die = false;
+class SessionManager extends Manager {
+
+    public final const int SESSION_SUCCESS = 0;
+    public final const int SESSION_PASSWORD_UPDATED = 1;
+    public final const int SESSION_PASSWORD_UPDATE_INVALID = 2;
+    public final const int SESSION_USER_BLOCKED = 3;
+    public final const int SESSION_EXPIRED = 4;
+    public final const int SESSION_DECRYPT_ERROR = 5;
+    public final const int SESSION_NOT_EXISTS = 6;
+    public final const int SESSION_DATABASE_ERROR = 7;
+
+
     public function __construct()
     {
-        try {
-            @mkdir(__DIR__.'/../../logs/');
-            $this->db = new PDO("mysql:host=localhost;", "root", "5328alexRU");
-            $this->db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-            $this->db->query("CREATE DATABASE IF NOT EXISTS `brightpath_admins`;");
-            $this->db->query("SET NAMES utf8;");
-            $this->db->query("USE `brightpath_admins`;");
-            $this->commands = new SessionExecutor();
-            $this->db->query($this->commands->createTable());
-        }catch (PDOException|Exception|Error $e) {
-            $this->die = true;
-            $this->createLog("SessionManager", $e);
-        }
+        parent::__construct(SessionExecutor::CREATE_TABLE());
     }
 
-    public function verifySession(int $session_id, string $master_key): int
+    public function verifySession(int $session_id, string $master_key, string $login_ip, bool $is_login=true): int
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM `admin_sessions` WHERE `id` = :session_id;");
+            $stmt = $this->db->prepare(SessionExecutor::VERIFY_SESSION());
             $stmt->execute([":session_id" => $session_id]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $stmt->closeCursor();
@@ -47,26 +43,33 @@ class SessionManager {
                             if ($password_update_at !== null) {
                                 $date = new DateTime($password_update_at);
                                 if ($date->getTimestamp() < $decryptedData["session_created_at"]) {
-                                    return 0; // Успешная проверка сессии
-                                }else $err_code = 1; // ОШИБКА: Пароль изменён
-                            }else $err_code = 2; // ОШИБКА: Не удалось получить дату обновления пароля
-                        }else $err_code = 3; // ОШИБКА: Пользователь заблокирован
-                    }else $err_code = 4; // ОШИБКА: Сессия истекла
-                }else $err_code = 5; // ОШИБКА: Не удалось расшифровать сессию (неверный ключ)
-            }else $err_code = 6; // ОШИБКА: Не найдена сессия с таким ID
+                                    if ($is_login) {
+                                        $current_date = date("Y-m-d H:i:s");
+                                        $adminsManager->updateLastData($admin_login, $login_ip, $current_date);
+                                    }
+                                    return self::SESSION_SUCCESS;
+                                }else $err_code = self::SESSION_PASSWORD_UPDATED;
+                            }else $err_code = self::SESSION_PASSWORD_UPDATE_INVALID;
+                        }else $err_code = self::SESSION_USER_BLOCKED;
+                    }else $err_code = self::SESSION_EXPIRED;
+                }else $err_code = self::SESSION_DECRYPT_ERROR;
+            }else $err_code = self::SESSION_NOT_EXISTS;
         }catch (PDOException|Exception|Error $e) {
             $this->createLog("SessionManager", $e);
-            $err_code = 7;
-            // ОШИБКА: Произошла ошибка в базе данных
+            $err_code = self::SESSION_DATABASE_ERROR;
         }
-        if ($err_code == 4 || $err_code == 3 || $err_code == 1) $this->removeSession($session_id);
+        if (
+            $err_code == self::SESSION_PASSWORD_UPDATED ||
+            $err_code == self::SESSION_USER_BLOCKED ||
+            $err_code == self::SESSION_EXPIRED
+        ) $this->removeSession($session_id);
         return $err_code;
     }
 
     public function removeSession(int $session_id): void
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM `admin_sessions` WHERE `id` = :session_id;");
+            $stmt = $this->db->prepare(SessionExecutor::REMOVE_SESSION());
             $stmt->execute([":session_id" => $session_id]);
         }catch (PDOException|Exception|Error $e) {
             $this->createLog("SessionManager", $e);
@@ -75,7 +78,7 @@ class SessionManager {
 
     public function createSession(string $admin_login, string $master_key): ?int {
         try {
-            $stmt = $this->db->prepare("INSERT INTO `admin_sessions` (`session_hash`) VALUES (:session_hash);");
+            $stmt = $this->db->prepare(SessionExecutor::CREATE_SESSION());
             $sessionData = [
                 'admin_login' => $admin_login,
                 'session_created_at' => time(),
@@ -128,18 +131,5 @@ class SessionManager {
             "session_created_at" => $session_created_at,
             "session_expires_at" => $session_expires_at,
         ];
-    }
-
-    public function createLog(string $className, Exception|Error $exception): void
-    {
-        $text = "[" . date("d.m.Y H:i:s") . "] Произошла ошибка в ".$className.": ".$exception->getMessage().". На строке ".$exception->getLine().", файл: ".$exception->getFile()."\n\n";
-        file_put_contents(__DIR__.'/../../logs/'.$className.'_Errors.log', $text, FILE_APPEND);
-    }
-
-    // ФУНКЦИЯ ДЛЯ ЛОГОВ ПРИ РАЗРАБОТКЕ
-    public function createCustomLog(string $text): void
-    {
-        $text = "[" . date("d.m.Y H:i:s") . "] Лог: ".$text."\n\n";
-        file_put_contents(__DIR__.'/../../logs/custom_log_admins.log', $text, FILE_APPEND);
     }
 }

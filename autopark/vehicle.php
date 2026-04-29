@@ -1,5 +1,5 @@
 <?php
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use managers\VehiclesManager;
 use Twig\Environment;
@@ -59,7 +59,7 @@ function getCategoryName($category): string
 
 function getImages($imagesPath): array
 {
-    $images = scandir(__DIR__."/../src/images/vehicles/".$imagesPath);
+    $images = scandir(__DIR__ . "/../src/images/vehicles/" .$imagesPath);
     $result = [
         "main" => '/../src/images/no_image.jpg" style="object-fit: fill;',
         "additional_images" => []

@@ -1,0 +1,1 @@
+SELECT `password_updated_at` FROM `admin_users` WHERE `login` = :login;

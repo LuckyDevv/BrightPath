@@ -1,5 +1,33 @@
+<?php
+include_once __DIR__."/../../vendor/autoload.php";
+use managers\GoodsManager;
+$goodsManager = new GoodsManager();
+$allGoods = $goodsManager->getAllGoods(true);
+
+// Вспомогательные функции (можно вынести в отдельный файл)
+function getCategoryName($category): string
+{
+    $map = [
+            1 => 'Гробы',
+            2 => 'Венки',
+            3 => 'Кресты',
+            4 => 'Памятники',
+            5 => 'Одежда',
+            6 => 'Аксессуар',
+    ];
+    return $map[$category] ?? "Не определено";
+}
+function upfirstutf(string $str): string
+{
+    $char = mb_strtoupper(substr($str,0,2), "utf-8"); // это первый символ
+    $str[0] = $char[0];
+    $str[1] = $char[1];
+    return $str;
+}
+?>
 <div class="page-goods">
     <div class="page-header-actions">
+        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <input type="text" placeholder="Поиск по названию...">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -33,7 +61,7 @@
                 <option value="неактивен">Неактивен</option>
             </select>
         </div>
-        <button class="btn-add">+ Добавить товар</button>
+        <button class="btn-add">+</button>
     </div>
 
     <table class="data-table">
@@ -51,62 +79,28 @@
         </tr>
         </thead>
         <tbody>
+        <?php
+        $placeholder = '../../src/images/no-image.jpg';
+        foreach ($allGoods as $goods) {
+            $img = "../../src/images/goods/".$goods["image_path"];
+            echo "
         <tr>
-            <td>1</td>
-            <td><img src="../src/images/goods/grob-sosna.jpg" class="table-thumb" onerror="this.src='../src/images/placeholder.jpg'"></td>
-            <td>Гроб сосновый</td>
-            <td>Гробы</td>
-            <td>Сосна</td>
-            <td>8 900 ₽</td>
-            <td>25</td>
-            <td><span class="status active">Активен</span></td>
+            <td>".$goods["id"]."</td>
+            <td><img src='".$img."' class='table-thumb' onerror='this.src=".$placeholder."'></td>
+            <td>".$goods["name"]."</td>
+            <td>".getCategoryName($goods["category"])."</td>
+            <td>".upfirstutf($goods["material"])."</td>
+            <td>".number_format($goods["price"], 2, ',', ' ')." ₽</td>
+            <td>".$goods["total_stock"]."</td>
+            <td><span class='status active'>Активен</span></td>
             <td>
-                <button class="btn-icon edit">✏️</button>
-                <button class="btn-icon delete">🗑️</button>
+                <button class='btn-icon view' onclick='goodsView(".$goods["id"].")'>👁️</button>
+                <button class='btn-icon edit' onclick='goodsEdit(".$goods["id"].")'>✏️</button>
+                <button class='btn-icon delete' onclick='goodsRemove(".$goods["id"].")'>🗑️</button>
             </td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td><img src="../src/images/goods/grob-dub.jpg" class="table-thumb" onerror="this.src='../src/images/placeholder.jpg'"></td>
-            <td>Гроб дубовый</td>
-            <td>Гробы</td>
-            <td>Дуб</td>
-            <td>35 000 ₽</td>
-            <td>8</td>
-            <td><span class="status active">Активен</span></td>
-            <td>
-                <button class="btn-icon edit">✏️</button>
-                <button class="btn-icon delete">🗑️</button>
-            </td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td><img src="../src/images/goods/venok.jpg" class="table-thumb" onerror="this.src='../src/images/placeholder.jpg'"></td>
-            <td>Венок траурный</td>
-            <td>Венки</td>
-            <td>Искусственные цветы</td>
-            <td>3 500 ₽</td>
-            <td>45</td>
-            <td><span class="status active">Активен</span></td>
-            <td>
-                <button class="btn-icon edit">✏️</button>
-                <button class="btn-icon delete">🗑️</button>
-            </td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td><img src="../src/images/goods/pamyatnik-granit.jpg" class="table-thumb" onerror="this.src='../src/images/placeholder.jpg'"></td>
-            <td>Памятник гранит</td>
-            <td>Памятники</td>
-            <td>Гранит</td>
-            <td>45 000 ₽</td>
-            <td>12</td>
-            <td><span class="status active">Активен</span></td>
-            <td>
-                <button class="btn-icon edit">✏️</button>
-                <button class="btn-icon delete">🗑️</button>
-            </td>
-        </tr>
+        </tr>";
+        }
+        ?>
         </tbody>
     </table>
 </div>

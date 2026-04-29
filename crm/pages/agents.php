@@ -10,6 +10,7 @@ $agents = $agentsManager->getAll(true);
 ?>
 <div class="page-agents">
     <div class="page-header-actions">
+        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <label>
                 <input type="text" placeholder="Поиск по имени, должности...">
@@ -38,7 +39,7 @@ $agents = $agentsManager->getAll(true);
                 </select>
             </label>
         </div>
-        <button class="btn-add" onclick="agentAdd()">+ Добавить агента</button>
+        <button class="btn-add" onclick="agentAdd()">+</button>
     </div>
 
     <table class="data-table">

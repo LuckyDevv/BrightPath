@@ -1,0 +1,1 @@
+SELECT `id`,`name`,`category`,`what_includes`,`price` FROM `services` WHERE `id`=:id AND `is_active`=1;

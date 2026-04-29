@@ -1,0 +1,1 @@
+SELECT `id`,`name`,`price`,1 as `available_stock` FROM `services` WHERE `is_active`=1;

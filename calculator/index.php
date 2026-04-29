@@ -1,3 +1,18 @@
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
+use managers\GoodsManager;
+use managers\VehiclesManager;
+use managers\ServicesManager;
+$goodsManager = new GoodsManager();
+$vehiclesManager = new VehiclesManager();
+$servicesManager = new ServicesManager();
+$demoItems = [
+    "transport" => $vehiclesManager->getAllForCalculator(),
+    "goods" => $goodsManager->getAllForCalculator(),
+    "services" => $servicesManager->getAllForCalculator(),
+];
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,6 +24,7 @@
     <link rel="stylesheet" href="../src/css/footer.css">
     <link rel="stylesheet" href="../src/css/modal.css">
     <link rel="stylesheet" href="../src/css/index.css">
+    <link rel="stylesheet" href="../src/css/toasts.css">
     <link rel="icon" href="../logo.png" type="image/png">
 </head>
 <body>
@@ -257,7 +273,37 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="order_modal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title">Оформление заказа</h2>
+            <button class="modal-close" onclick="orderClose()">&times;</button>
+        </div>
+        <div class="modal-content" style="padding: 20px 30px 10px;">
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Как вас зовут?</label>
+                    <input type="text" value="" id="order_modal_name" placeholder="Введите ваше имя">
+                </div>
+                <div class="form-group">
+                    <label>Ваш номер телефона</label>
+                    <input type="text" value="" id="order_modal_phone" placeholder="+7 (___) ___-__-__">
+                </div>
+                <div class="form-group">
+                    <label>Ваша электронная почта</label>
+                    <input type="text" value="" id="order_modal_email" placeholder="example@mail.ru">
+                </div>
+                <button type="button" class="modal-submit" onclick="orderCreate()">Оплатить</button>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Контейнер для уведомлений -->
+<div id="toast-container" class="toast-container"></div>
+<script src="../src/js/jquery.min.js"></script>
+<script src="../src/js/toasts.js"></script>
 <script src="src/js/script.js"></script>
 <script src="../src/js/modal.js"></script>
+<script>demoItems = <?=json_encode($demoItems);?></script>
 </body>
 </html>

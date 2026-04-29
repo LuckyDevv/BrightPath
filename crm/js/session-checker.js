@@ -1,11 +1,15 @@
 async function checkSession() {
+    const currentPage = window.location.pathname.split('/').pop();
     if (getLocalStorage("is_logout") !== null) {
+        removeLocalStorage("is_logout");
+        if (currentPage === "index.php" || currentPage === "") {
+            window.location.href = 'auth.php';
+        }
         return;
     }
     // Получаем session_id из cookie
     const sessionId = getCookie('session_id');
     // Если session_id нет и мы на index.php - сразу редирект
-    const currentPage = window.location.pathname.split('/').pop();
     if (sessionId === null) {
         if (currentPage === 'index.php' || currentPage === '') {
             window.location.href = 'auth.php';

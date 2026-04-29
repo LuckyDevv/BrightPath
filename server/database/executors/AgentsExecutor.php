@@ -4,28 +4,38 @@ namespace executors;
 
 class AgentsExecutor
 {
-    public function createTable(): false|string
+    public static function CREATE_TABLE(): false|string
     {
         return file_get_contents(__DIR__."/../schema/agents.sql");
     }
 
-    public function getAll(): false|string
+    public static function GET_ALL(): false|string
     {
         return file_get_contents(__DIR__."/../queries/agents/getAll.sql");
     }
 
-    public function addAgent(): false|string
+    public static function ADD_AGENT(): false|string
     {
         return file_get_contents(__DIR__."/../queries/agents/addAgent.sql");
     }
 
-    public function getById(): false|string
+    public static function GET_BY_ID(): false|string
     {
         return file_get_contents(__DIR__."/../queries/agents/getById.sql");
     }
 
-    public function updateAgent(): false|string
+    public static function UPDATE_AGENT(): false|string
     {
         return file_get_contents(__DIR__."/../queries/agents/updateAgent.sql");
+    }
+
+    public static function GET_IMAGE_PATH_BY_ID(): false|string
+    {
+        return file_get_contents(__DIR__."/../queries/agents/getImagePathByID.sql");
+    }
+
+    public static function DELETE_AGENT(): false|string
+    {
+        return file_get_contents(__DIR__."/../queries/agents/deleteAgent.sql");
     }
 }

@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/server/database" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/server/twig" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/server" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/lexer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/egulias/email-validator" />
@@ -14,6 +15,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-intl-normalizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-mbstring" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/twig/twig" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/chillerlan/php-qrcode" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/chillerlan/php-settings-container" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,0 +1,1 @@
+SELECT COALESCE(ROUND(SUM(`summary`) / COUNT(*), 2), 0) AS `avg_check_today` FROM `orders` WHERE `created_at` >= CURDATE() AND `created_at` < CURDATE() + INTERVAL 1 DAY;

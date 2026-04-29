@@ -1,0 +1,1 @@
+SELECT COUNT(*) AS `count_yesterday` FROM `orders` WHERE `created_at` >= CURDATE() - INTERVAL 1 DAY AND `created_at` < CURDATE();

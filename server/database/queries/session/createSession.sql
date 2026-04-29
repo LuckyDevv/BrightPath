@@ -1,0 +1,1 @@
+INSERT INTO `admin_sessions` (`session_hash`) VALUES (:session_hash);

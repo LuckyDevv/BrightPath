@@ -1,0 +1,1 @@
+SELECT `image_path` FROM `agents` WHERE `id` = :id;

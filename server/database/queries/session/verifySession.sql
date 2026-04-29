@@ -1,0 +1,1 @@
+SELECT * FROM `admin_sessions` WHERE `id` = :session_id;

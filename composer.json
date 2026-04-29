@@ -5,7 +5,8 @@
     "egulias/email-validator": "^4.0.1",
     "ext-pdo": "*",
     "ext-gd": "*",
-    "ext-openssl": "*"
+    "ext-openssl": "*",
+    "chillerlan/php-qrcode": "dev-main"
   },
   "autoload": {
     "psr-0": {

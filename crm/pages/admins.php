@@ -1,5 +1,11 @@
+<?php
+include_once __DIR__."/../../vendor/autoload.php";
+use managers\AdminsManager;
+$adminsManager = new AdminsManager();
+?>
 <div class="page-admins">
     <div class="page-header-actions">
+        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <input type="text" placeholder="Поиск по логину...">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -20,7 +26,7 @@
                 <option value="заблокирован">Заблокирован</option>
             </select>
         </div>
-        <button class="btn-add">+ Добавить администратора</button>
+        <button class="btn-add">+</button>
     </div>
 
     <table class="data-table">
@@ -36,45 +42,169 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>1</td>
-            <td>admin</td>
-            <td><span class="role-badge admin">Администратор</span></td>
-            <td>22.03.2026 14:30</td>
-            <td>01.01.2026</td>
-            <td><span class="status active">Активен</span></td>
-            <td>
-                <button class="btn-icon edit">✏️</button>
-                <button class="btn-icon lock">🔒</button>
-                <button class="btn-icon delete">🗑️</button>
-            </td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>manager_ivanov</td>
-            <td><span class="role-badge manager">Менеджер</span></td>
-            <td>22.03.2026 09:15</td>
-            <td>15.02.2026</td>
-            <td><span class="status active">Активен</span></td>
-            <td>
-                <button class="btn-icon edit">✏️</button>
-                <button class="btn-icon lock">🔒</button>
-                <button class="btn-icon delete">🗑️</button>
-            </td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>operator_petrova</td>
-            <td><span class="role-badge operator">Оператор</span></td>
-            <td>21.03.2026 16:45</td>
-            <td>01.03.2026</td>
-            <td><span class="status inactive">Заблокирован</span></td>
-            <td>
-                <button class="btn-icon edit">✏️</button>
-                <button class="btn-icon unlock">🔓</button>
-                <button class="btn-icon delete">🗑️</button>
-            </td>
-        </tr>
+        <?php
+        $admins = $adminsManager->getAllAdmins();
+        if (count($admins) > 0) {
+            $roles_map = [
+                    "admin" => '<span class="role-badge admin">Администратор</span>',
+                    "manager" => '<span class="role-badge manager">Менеджер</span>',
+                    "operator" => '<span class="role-badge operator">Оператор</span>',
+            ];
+            foreach ($admins as $admin) {
+                $status = $admin['is_locked'] ? '<span class="status inactive">Заблокирован</span>' : '<span class="status active">Активен</span>';
+                $last_login = $admin['last_login_at'];
+                if ($last_login == 1 || $last_login == NULL) {
+                    $last_login = "Нет данных";
+                }
+                echo '<tr id="adm_'.$admin['id'].'">
+                          <td>'.$admin['id'].'</td>
+                          <td>'.$admin['login'].'</td>
+                          <td>'.$roles_map[$admin['role']].'</td>
+                          <td>'.$last_login.'</td>
+                          <td>'.$admin['created_at'].'</td>
+                          <td>'.$status.'</td>
+                          <td>
+                              <button class="btn-reset-2fa" style="width: auto" onclick="adminEdit('.$admin['id'].')">Редактировать</button>
+                          </td>
+                      </tr>';
+            }
+        }
+        ?>
         </tbody>
     </table>
+</div>
+<div class="modal-overlay" id="adm_modal_create">
+    <div class="modal-container" id="modal_container">
+        <div class="modal-header">
+            <h2 id="adm_modal_create_title" class="modal-title">Добавление администратора</h2>
+            <button class="modal-close" onclick="adminCloseCreate()">&times;</button>
+        </div>
+        <div class="modal-content">
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Логин администратора</label>
+                    <input type="text" value="" id="adm_modal_create_name" placeholder="Введите логин...">
+                </div>
+                <div class="form-group">
+                    <label>Роль</label>
+                    <select id="adm_modal_create_role">
+                        <option disabled selected hidden>Выберите роль</option>
+                        <option id="adm_modal_create_operator">Оператор</option>
+                        <option id="adm_modal_create_manager">Менеджер</option>
+                        <option id="adm_modal_create_admin">Администратор</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Доступ</label>
+                    <select id="adm_modal_create_status">
+                        <option disabled selected hidden>Выберите доступ</option>
+                        <option id="adm_modal_create_active">Активен</option>
+                        <option id="adm_modal_create_blocked">Заблокирован</option>
+                    </select>
+                </div>
+                <button id="adm_modal_create_save" type="button" class="modal-submit" onclick="adminSaveCreate()">Сохранить</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay" id="adm_modal_edit">
+    <div class="modal-container" id="adm_modal_edit_container">
+        <div class="modal-header">
+            <h2 id="adm_modal_edit_title" class="modal-title">Панель управления</h2>
+            <button class="modal-close" onclick="adminCloseEdit()">&times;</button>
+        </div>
+        <div class="modal-content">
+            <form class="modal-form">
+                <!-- ID администратора (только чтение) -->
+                <div class="form-group">
+                    <label>ID администратора</label>
+                    <input type="text" id="adm_modal_edit_id" readonly disabled class="readonly-field">
+                </div>
+
+                <!-- Логин (редактируемый) -->
+                <div class="form-group">
+                    <label>Логин администратора</label>
+                    <input type="text" value="" id="adm_modal_edit_login" placeholder="Введите логин...">
+                </div>
+
+                <!-- Роль (выбор) -->
+                <div class="form-group">
+                    <label>Роль</label>
+                    <select id="adm_modal_edit_role">
+                        <option value="operator">Оператор</option>
+                        <option value="manager">Менеджер</option>
+                        <option value="admin">Администратор</option>
+                    </select>
+                </div>
+
+                <!-- Статус блокировки с кнопкой -->
+                <div class="form-group">
+                    <label>Статус аккаунта</label>
+                    <div class="status-with-button">
+                        <input disabled type="text" value='' id='adm_modal_edit_status'>
+                        <button type="button" class="btn-block" id="adm_modal_edit_block_btn" onclick="toggleAdminBlock()">
+                            Заблокировать
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- 2FA секция -->
+                <div class="form-group">
+                    <label>Двухфакторная авторизация</label>
+                    <div class="status-with-button">
+                        <input disabled type="text" value='' id='adm_modal_edit_2fa_status'>
+                        <button type="button" class="btn-reset-2fa" id="adm_modal_edit_reset_2fa" onclick="resetAdmin2FA()">
+                            Сбросить 2FA
+                        </button>
+                    </div>
+                    <p class="form-hint">После сброса администратору потребуется настроить 2FA заново при следующем входе.</p>
+                </div>
+
+                <!-- Разделитель -->
+                <div class="form-divider"></div>
+
+                <!-- Информационные поля (только чтение) -->
+                <div class="info-section">
+                    <h3>Информация об аккаунте</h3>
+
+                    <div class="form-group">
+                        <label>Дата создания учетной записи</label>
+                        <div class="status-with-button">
+                            <input type="text" id="adm_modal_edit_created_at" readonly disabled class="readonly-field">
+                            <button type="button" class="btn-block" id="adm_modal_edit_remove_account" onclick="removeAdminAccount()">
+                                Удалить аккаунт
+                            </button>
+                        </div>
+                        <p class="form-hint">После удаления аккаунта, он будет недоступен для входа и редактирования.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Дата последнего обновления пароля</label>
+                        <div class="status-with-button">
+                            <input type="text" id="adm_modal_edit_password_updated" readonly disabled class="readonly-field">
+                            <button type="button" class="btn-reset-2fa" id="adm_modal_edit_reset_password" onclick="resetAdminPassword()">
+                                Сбросить пароль
+                            </button>
+                        </div>
+                        <p class="form-hint">После сброса пароля, будет сгенерирован новый пароль. Передайте его администратору.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Дата последнего входа</label>
+                        <input type="text" id="adm_modal_edit_last_login" readonly disabled class="readonly-field">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Последний IP входа</label>
+                        <input type="text" id="adm_modal_edit_last_ip" readonly disabled class="readonly-field">
+                    </div>
+                </div>
+                <!-- Кнопки действий -->
+                <div class="form-actions">
+                    <button type="button" class="modal-submit" id="adm_modal_edit_save" onclick="adminSaveEdit()">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

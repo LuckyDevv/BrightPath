@@ -46,140 +46,7 @@ if (filtersToggle && filtersWrapper && closeFilters) {
 }
 
 // ===== ДАННЫЕ ТОВАРОВ =====
-const goodsData = [
-    {
-        id: 1,
-        name: 'Гроб сосновый',
-        category: 'гроб',
-        material: 'сосна',
-        image: '../src/images/goods/grob_sosnoviy.jpg',
-        description: 'Классический гроб из массива сосны. Обивка тканью, крест в комплекте.',
-        price: 8900,
-        orders: 156,
-        stock: 25
-    },
-    {
-        id: 2,
-        name: 'Гроб дубовый',
-        category: 'гроб',
-        material: 'дуб',
-        image: '../src/images/goods/grob_duboviy.jpg',
-        description: 'Премиальный гроб из массива дуба. Ручная работа, полировка, бархатная обивка.',
-        price: 35000,
-        orders: 89,
-        stock: 8
-    },
-    {
-        id: 3,
-        name: 'Гроб красное дерево',
-        category: 'гроб',
-        material: 'красное дерево',
-        image: '../src/images/goods/grob_krasnoye_derevo.jpg',
-        description: 'Элитный гроб из красного дерева с инкрустацией. Для особых церемоний.',
-        price: 65000,
-        orders: 23,
-        stock: 3
-    },
-    {
-        id: 4,
-        name: 'Венок траурный',
-        category: 'венок',
-        material: 'искусственные цветы',
-        image: '../src/images/goods/venok.jpg',
-        description: 'Траурный венок из искусственных цветов. Диаметр 60 см.',
-        price: 3500,
-        orders: 210,
-        stock: 45
-    },
-    {
-        id: 5,
-        name: 'Крест деревянный',
-        category: 'крест',
-        material: 'дуб',
-        image: '../src/images/goods/krest_2.jpg',
-        description: 'Православный крест из дуба. Высота 120 см.',
-        price: 2800,
-        orders: 178,
-        stock: 32
-    },
-    {
-        id: 6,
-        name: 'Памятник гранит',
-        category: 'памятник',
-        material: 'гранит',
-        image: '../src/images/goods/pamyatnik_granit.jpg',
-        description: 'Гранитный памятник с гравировкой. Различные варианты оформления.',
-        price: 45000,
-        orders: 67,
-        stock: 12
-    },
-    {
-        id: 7,
-        name: 'Одежда для погребения',
-        category: 'одежда',
-        material: 'ткань',
-        image: '../src/images/goods/odezhda.jpg',
-        description: 'Комплект одежды для погребения. Размеры от 46 до 60.',
-        price: 4200,
-        orders: 145,
-        stock: 38
-    },
-    {
-        id: 8,
-        name: 'Подушка ритуальная',
-        category: 'аксессуары',
-        material: 'ткань',
-        image: '../src/images/goods/podushka.jpg',
-        description: 'Ритуальная подушка под голову. Белая, с вышивкой.',
-        price: 1200,
-        orders: 203,
-        stock: 67
-    },
-    {
-        id: 9,
-        name: 'Венок живой',
-        category: 'венок',
-        material: 'живые цветы',
-        image: '../src/images/goods/vebok_2.jpg',
-        description: 'Венок из живых цветов (розы, хризантемы). Доставка в день заказа.',
-        price: 8500,
-        orders: 56,
-        stock: 7
-    },
-    {
-        id: 10,
-        name: 'Крест металлический',
-        category: 'крест',
-        material: 'металл',
-        image: '../src/images/goods/krest_metall.jpg',
-        description: 'Кованый металлический крест. Покрытие черное матовое.',
-        price: 5400,
-        orders: 92,
-        stock: 15
-    },
-    {
-        id: 11,
-        name: 'Памятник мрамор',
-        category: 'памятник',
-        material: 'мрамор',
-        image: '../src/images/goods/pamyatnik_mramor.jpg',
-        description: 'Мраморный памятник. Элитная отделка, возможна цветная гравировка.',
-        price: 78000,
-        orders: 31,
-        stock: 4
-    },
-    {
-        id: 12,
-        name: 'Лампада ритуальная',
-        category: 'аксессуары',
-        material: 'стекло',
-        image: '../src/images/goods/lampada.jpg',
-        description: 'Стеклянная лампада для свечей. Высота 20 см.',
-        price: 850,
-        orders: 187,
-        stock: 52
-    }
-];
+let goodsData = [];
 
 // ===== ЭЛЕМЕНТЫ DOM =====
 const vehiclesGrid = document.getElementById('vehiclesGrid');
@@ -238,18 +105,18 @@ function renderGoods(goods) {
 
         let categoryName = '';
         switch(item.category) {
-            case 'гроб': categoryName = 'Гроб'; break;
-            case 'венок': categoryName = 'Венок'; break;
-            case 'крест': categoryName = 'Крест'; break;
-            case 'памятник': categoryName = 'Памятник'; break;
-            case 'одежда': categoryName = 'Одежда'; break;
-            case 'аксессуары': categoryName = 'Аксессуар'; break;
+            case 1: categoryName = 'Гроб'; break;
+            case 2: categoryName = 'Венок'; break;
+            case 3: categoryName = 'Крест'; break;
+            case 4: categoryName = 'Памятник'; break;
+            case 5: categoryName = 'Одежда'; break;
+            case 6: categoryName = 'Аксессуар'; break;
             default: categoryName = item.category;
         }
 
         card.innerHTML = `
             <div class="vehicle-image">
-                <img src="${item.image}" alt="${item.name}" onerror="this.src='src/images/placeholder.jpg'">
+                <img src="../src/images/goods/${item.image_path}" alt="${item.name}" onerror="this.src='src/images/placeholder.jpg'">
             </div>
             <div class="vehicle-content">
                 <span class="vehicle-category">${categoryName}</span>
@@ -269,13 +136,13 @@ function renderGoods(goods) {
                             <circle cx="17" cy="17" r="2" stroke="currentColor" fill="none" stroke-width="1.5"/>
                             <text x="12" y="16" text-anchor="middle" fill="#d4a373" font-size="8" font-weight="bold">${item.stock}</text>
                         </svg>
-                        ${item.stock} шт.
+                        ${item.total_stock} шт.
                     </span>
                 </div>
-                <p class="vehicle-description">${item.description}</p>
-                <div class="vehicle-price">от ${formattedPrice} ₽</div>
+                <p class="vehicle-description">${item.description_short}</p>
+                <div class="vehicle-price">${formattedPrice} ₽</div>
                 <div class="vehicle-actions">
-                    <a href="#" class="btn-outline">Подробнее</a>
+                    <a href="goods_detail.php?id=${item.id}" class="btn-outline">Подробнее</a>
                     <a href="#" class="btn">В корзину</a>
                 </div>
             </div>
@@ -294,8 +161,7 @@ function filterGoods() {
     if (searchTerm) {
         filtered = filtered.filter(item =>
             item.name.toLowerCase().includes(searchTerm) ||
-            item.description.toLowerCase().includes(searchTerm) ||
-            item.category.toLowerCase().includes(searchTerm) ||
+            item.description_short.toLowerCase().includes(searchTerm) ||
             (item.material && item.material.toLowerCase().includes(searchTerm))
         );
     }
@@ -303,13 +169,14 @@ function filterGoods() {
     // Категория
     let category = 'all';
     if (categoryFilter && categoryFilter.value !== 'all') {
-        category = categoryFilter.value;
+        category = categoryFilter.selectedIndex;
     } else if (categoryFilter_mobile && categoryFilter_mobile.value !== 'all') {
-        category = categoryFilter_mobile.value;
+        category = categoryFilter_mobile.selectedIndex;
     }
     if (category !== 'all') {
         filtered = filtered.filter(item => item.category === category);
     }
+    console.log(category);
 
     // Цена
     let min = 0;
@@ -344,7 +211,7 @@ function filterGoods() {
     }
     if (stockValue !== 'all') {
         const minStock = parseInt(stockValue);
-        filtered = filtered.filter(item => (item.stock || 1) >= minStock);
+        filtered = filtered.filter(item => (item.total_stock || 1) >= minStock);
     }
 
     // Сортировка

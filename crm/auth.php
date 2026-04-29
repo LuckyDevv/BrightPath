@@ -1,8 +1,3 @@
-<?php
-if (isset($_COOKIE['session_id'])) {
-
-}
-?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>

@@ -1,0 +1,1 @@
+SELECT `is_locked` FROM `admin_users` WHERE `login` = :login;

@@ -1,0 +1,1 @@
+SELECT `id`,`name`,`category`,`description`,`price`,`orders_count` FROM `services` WHERE `is_active`=1;

@@ -2,10 +2,11 @@
 require_once __DIR__.'/../../vendor/autoload.php';
 use managers\VehiclesManager;
 $vehiclesManager = new VehiclesManager();
-$vehicles = $vehiclesManager->getAllAdmin();
+$vehicles = $vehiclesManager->getAllVehicles(true);
 ?>
 <div class="page-vehicles">
     <div class="page-header-actions">
+        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <input type="text" placeholder="Поиск по модели...">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -27,7 +28,7 @@ $vehicles = $vehiclesManager->getAllAdmin();
                 <option value="неактивен">Неактивен</option>
             </select>
         </div>
-        <button class="btn-add" onclick="vehicleAdd()">Добавить</button>
+        <button class="btn-add" onclick="vehicleAdd()">+</button>
     </div>
 
     <table class="data-table" id="vehicles_table">

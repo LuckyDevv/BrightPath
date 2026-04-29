@@ -8,35 +8,25 @@ use executors\AdminsExecutor;
 use PDO;
 use PDOException;
 
-class AdminsManager
+class AdminsManager extends Manager
 {
-    protected PDO $db;
-    private AdminsExecutor $commands;
-    public bool $die = false;
+    public const int AUTH_SUCCESS = 0;
+    public const int AUTH_PASSWORD_INVALID = 1;
+    public const int AUTH_TOTP_REQUIRED = 2;
+    public const int AUTH_USER_BLOCKED = 3;
+    public const int AUTH_USER_NOT_EXISTS = 4;
+    public const int AUTH_DATABASE_ERROR = 5;
+
     public function __construct()
     {
-        try {
-            @mkdir(__DIR__.'/../../logs/');
-            $this->db = new PDO("mysql:host=localhost;", "root", "5328alexRU");
-            $this->db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
-            $this->db->query("CREATE DATABASE IF NOT EXISTS `brightpath_admins`;");
-            $this->db->query("SET NAMES utf8;");
-            $this->db->query("USE `brightpath_admins`;");
-            $this->commands = new AdminsExecutor();
-            $this->db->query($this->commands->createTable());
-        }catch (PDOException|Exception|Error $e) {
-            $this->die = true;
-            $this->createLog("AdminsManager", $e);
-        }
+        parent::__construct(AdminsExecutor::CREATE_TABLE(), true);
     }
 
     public function addAdminUser(string $login, string $password, string $role = 'operator', ?string $totpSecret = null): false|int
     {
         try {
-            // Подключение к БД
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             // Проверка существования логина
-            $checkStmt = $this->db->prepare("SELECT `id` FROM `admin_users` WHERE `login` = :login");
+            $checkStmt = $this->db->prepare(AdminsExecutor::CHECK_LOGIN());
             $checkStmt->execute([':login' => $login]);
             if ($checkStmt->fetch()) {
                 throw new Exception("Логин '{$login}' уже существует");
@@ -44,7 +34,7 @@ class AdminsManager
             // Хеширование пароля
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             // Подготовка запроса
-            $stmt = $this->db->prepare($this->commands->addAdmin());
+            $stmt = $this->db->prepare(AdminsExecutor::ADD_ADMIN_USER());
             // Выполнение
             $stmt->execute([
                 ':login' => $login,
@@ -63,33 +53,33 @@ class AdminsManager
     public function checkAdminUser(string $login, string $password): null|int
     {
         try {
-            $stmt = $this->db->prepare($this->commands->checkUser());
+            $stmt = $this->db->prepare(AdminsExecutor::CHECK_ADMIN_USER());
             $result = $stmt->execute([':login' => $login]);
             if ($result) {
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 if (isset($result['is_locked'], $result['password_hash'], $result['is_2fa_enabled'])) {
                     if (!$result['is_locked']) {
-                        $this->createCustomLog("Fetch: ".json_encode($result));
+                        $this->createCustomLog("AdminsManager", "Fetch: ".json_encode($result));
                         if ($result['is_2fa_enabled'] == 1) {
                             if (array_key_exists('totp_secret', $result) && $result['totp_secret'] !== "") {
                                 if (password_verify($password, $result['password_hash'])) {
-                                    return 0;
-                                }else return 1;
-                            }else return 2;
-                        }else return 2;
-                    }else return 3;
-                }else return 4;
-            }else return 4;
+                                    return self::AUTH_SUCCESS;
+                                }else return self::AUTH_PASSWORD_INVALID;
+                            }else return self::AUTH_TOTP_REQUIRED;
+                        }else return self::AUTH_TOTP_REQUIRED;
+                    }else return self::AUTH_USER_BLOCKED;
+                }else return self::AUTH_USER_NOT_EXISTS;
+            }else return self::AUTH_USER_NOT_EXISTS;
         }catch (PDOException|Exception|Error $e) {
             $this->createLog("AdminsManager", $e);
-            return 5;
+            return self::AUTH_DATABASE_ERROR;
         }
     }
 
     public function getRole(string $login): ?string
     {
         try {
-            $stmt = $this->db->prepare("SELECT `role` FROM `admin_users` WHERE `login` = :login");
+            $stmt = $this->db->prepare(AdminsExecutor::GET_ROLE());
             $stmt->execute([':login' => $login]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if (is_array($result) && isset($result['role'])) {
@@ -104,7 +94,7 @@ class AdminsManager
     public function getTotpSecret(string $login): ?string
     {
         try {
-            $stmt = $this->db->prepare("SELECT `totp_secret` FROM `admin_users` WHERE `login` = :login");
+            $stmt = $this->db->prepare(AdminsExecutor::GET_TOTP_SECRET());
             $result = $stmt->execute([':login' => $login]);
             if ($result) {
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -121,14 +111,14 @@ class AdminsManager
     public function checkAdmin(string $login): ?bool
     {
         try {
-            $this->createCustomLog("Логин проверяемого админа: ".$login);
-            $stmt = $this->db->prepare("SELECT `is_active` FROM `admin_users` WHERE `login` = :login");
+            $this->createCustomLog("AdminsManager", "Логин проверяемого админа: ".$login);
+            $stmt = $this->db->prepare(AdminsExecutor::CHECK_BLOCK());
             $stmt->bindValue(":login", $login, PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $this->createCustomLog("Fetch по логину: ".json_encode($result));
+            $this->createCustomLog("AdminsManager", "Fetch по логину: ".json_encode($result));
             if (is_array($result) && count($result) > 0) {
-                return !((bool) $result['is_active']);
+                return !((bool) $result['is_locked']);
             }
         }catch (PDOException|\Exception|\Error $e) {
             $this->createLog("AgentsManager", $e);
@@ -139,7 +129,7 @@ class AdminsManager
     public function getLastPassUpdate(string $login): ?string
     {
         try {
-            $stmt = $this->db->prepare("SELECT `password_updated_at` FROM `admin_users` WHERE `login` = :login");
+            $stmt = $this->db->prepare(AdminsExecutor::GET_LAST_PASSWORD_UPDATE());
             $stmt->execute([':login' => $login]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if (isset($result['password_updated_at'])) {
@@ -154,7 +144,7 @@ class AdminsManager
     public function setupTotp(string $login, string $secret, bool $is_enabled = true): bool
     {
         try {
-            $stmt = $this->db->prepare("UPDATE `admin_users` SET `is_2fa_enabled` = :is_2fa_enabled, `totp_secret` = :totp_secret WHERE `login` = :login");
+            $stmt = $this->db->prepare(AdminsExecutor::SETUP_TOTP());
             $stmt->bindParam(':login', $login);
             $stmt->bindParam(':is_2fa_enabled', $is_enabled, PDO::PARAM_BOOL);
             $stmt->bindParam(':totp_secret', $secret, PDO::PARAM_STR);
@@ -168,16 +158,89 @@ class AdminsManager
         return false;
     }
 
-    public function createLog(string $className, Exception|Error $exception): void
+    public function getAllAdmins(): array
     {
-        $text = "[" . date("d.m.Y H:i:s") . "] Произошла ошибка в ".$className.": ".$exception->getMessage().". На строке ".$exception->getLine().", файл: ".$exception->getFile()."\n\n";
-        file_put_contents(__DIR__.'/../../logs/'.$className.'_Errors.log', $text, FILE_APPEND);
+        try {
+            $stmt = $this->db->prepare(AdminsExecutor::GET_ALL_ADMINS());
+            $result = $stmt->execute();
+            if ($result) {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return [];
     }
 
-    // ФУНКЦИЯ ДЛЯ ЛОГОВ ПРИ РАЗРАБОТКЕ
-    public function createCustomLog(string $text): void
+    public function updateLastData(string $admin_login, string $login_ip, string $current_date): bool
     {
-        $text = "[" . date("d.m.Y H:i:s") . "] Лог: ".$text."\n\n";
-        file_put_contents(__DIR__.'/../../logs/custom_log_admins.log', $text, FILE_APPEND);
+        try {
+            $stmt = $this->db->prepare(AdminsExecutor::UPDATE_LAST_DATA());
+            $stmt->bindParam(':last_login_at', $current_date, PDO::PARAM_STR);
+            $stmt->bindParam(':last_login_ip', $login_ip, PDO::PARAM_STR);
+            $stmt->bindParam(':login', $admin_login, PDO::PARAM_STR);
+            return $stmt->execute();
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+            return false;
+        }
+    }
+
+    public function getById(int $adminId): array
+    {
+        try {
+            $stmt = $this->db->prepare(AdminsExecutor::GET_BY_ID());
+            $stmt->execute([':id' => $adminId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (is_array($result) && isset($result['id'])) {
+                return $result;
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return [];
+    }
+
+    public function resetTotp(int $adminId): bool
+    {
+        try {
+            $stmt = $this->db->prepare(AdminsExecutor::RESET_TOTP());
+            $stmt->bindParam(':id', $adminId, PDO::PARAM_INT);
+            $result = $stmt->execute();
+            if ($result) {
+                return true;
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
+    }
+
+    public function changePassword(int $adminId, string $new_password): bool
+    {
+        try {
+            $stmt = $this->db->prepare(AdminsExecutor::CHANGE_PASSWORD());
+            $stmt->bindValue(':id', $adminId, PDO::PARAM_INT);
+            $stmt->bindValue(':new_password', password_hash($new_password, PASSWORD_DEFAULT), PDO::PARAM_STR);
+            $stmt->bindValue(':password_updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            if ($stmt->execute()) {
+                return true;
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
+    }
+
+    public function removeAccount(int $adminId): bool
+    {
+        try {
+            $stmt = $this->db->prepare(AdminsExecutor::REMOVE_ACCOUNT());
+            $stmt->bindParam(':id', $adminId, PDO::PARAM_INT);
+            return $stmt->execute();
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
     }
 }

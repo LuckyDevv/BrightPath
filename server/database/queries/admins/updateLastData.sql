@@ -1,0 +1,1 @@
+UPDATE `admin_users` SET `last_login_at`=:last_login_at, `last_login_ip`=:last_login_ip WHERE `login`=:login;

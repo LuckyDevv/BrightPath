@@ -1,0 +1,1 @@
+SELECT DATE(`created_at`) AS `date`, COUNT(*) AS `orders_count` FROM `orders` WHERE `created_at` >= CURDATE() - INTERVAL 29 DAY GROUP BY DATE(`created_at`) ORDER BY `date` ASC;

@@ -1,0 +1,1 @@
+SELECT `totp_secret` FROM `admin_users` WHERE `login` = :login;

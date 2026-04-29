@@ -1,0 +1,1 @@
+UPDATE `admin_users` SET `password_hash` = :new_password, `password_updated_at` = :password_updated_at WHERE `id` = :id;

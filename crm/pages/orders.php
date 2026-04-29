@@ -1,5 +1,13 @@
+<?php
+require_once __DIR__ . "/../../vendor/autoload.php";
+use managers\OrdersManager;
+$ordersManager = new OrdersManager();
+$allOrders = $ordersManager->getAllOrders();
+?>
+
 <div class="page-orders">
     <div class="page-header-actions">
+        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <input type="text" placeholder="Поиск по номеру заказа, клиенту...">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -22,7 +30,6 @@
                 <option value="этот месяц">Этот месяц</option>
             </select>
         </div>
-        <button class="btn-export">📊 Экспорт</button>
     </div>
 
     <table class="data-table">
@@ -30,6 +37,7 @@
         <tr>
             <th>ID</th>
             <th>Клиент</th>
+            <th>Почта</th>
             <th>Телефон</th>
             <th>Сумма</th>
             <th>Дата</th>
@@ -38,33 +46,37 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>#1245</td>
-            <td>Иванов Иван Иванович</td>
-            <td>+7 (999) 123-45-67</td>
-            <td>45 000 ₽</td>
-            <td>22.03.2026</td>
-            <td><span class="status completed">Выполнен</span></td>
-            <td><button class="btn-icon view">👁️</button></td>
-        </tr>
-        <tr>
-            <td>#1244</td>
-            <td>Петрова Анна Сергеевна</td>
-            <td>+7 (999) 234-56-78</td>
-            <td>32 500 ₽</td>
-            <td>22.03.2026</td>
-            <td><span class="status in-progress">В работе</span></td>
-            <td><button class="btn-icon view">👁️</button></td>
-        </tr>
-        <tr>
-            <td>#1243</td>
-            <td>Сидоров Владимир Владимирович</td>
-            <td>+7 (999) 345-67-89</td>
-            <td>28 000 ₽</td>
-            <td>21.03.2026</td>
-            <td><span class="status pending">Новый</span></td>
-            <td><button class="btn-icon view">👁️</button></td>
-        </tr>
+        <?php
+        foreach ($allOrders as $order) {
+            switch ($order['status']) {
+                case "created":
+                    $status = '<span class="status pending">Новый</span>';
+                    break;
+                case 'completed':
+                    $status = '<span class="status completed">Выполнен</span>';
+                    break;
+                case 'in_work':
+                    $status = '<span class="status in-progress">В работе</span>';
+                    break;
+                case 'cancelled':
+                    $status = '<span class="status inactive">Отменён</span>';
+                    break;
+                default:
+                    $status = '<span class="status inactive">Неизвестно</span>';
+                    break;
+            }
+            echo '<tr>
+                    <td>#'.$order['id'].'</td>
+                    <td>'.$order['username'].'</td>
+                    <td>'.$order['useremail'].'</td>
+                    <td>'.$order['userphone'].'</td>
+                    <td>'.number_format($order['summary'], 2, ',', ' ').' ₽</td>
+                    <td>'.$order['created_at'].'</td>
+                    <td>'.$status.'</td>
+                    <td><button class="btn-icon view">👁️</button></td>
+                 </tr>';
+        }
+        ?>
         </tbody>
     </table>
 </div>

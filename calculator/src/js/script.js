@@ -2,6 +2,7 @@
 const burger = document.getElementById('burger');
 const nav = document.getElementById('nav');
 const overlay = document.getElementById('overlay');
+let temp_order_data = null;
 
 function toggleMenu() {
     burger.classList.toggle('active');
@@ -30,26 +31,7 @@ let calculatorItems = {
 };
 
 // Демо-данные (для выбора)
-const demoItems = {
-    transport: [
-        { id: 1, name: 'Mercedes-Benz E-Class', price: 25000, category: 'transport' },
-        { id: 2, name: 'Cadillac CTS', price: 30000, category: 'transport' },
-        { id: 3, name: 'ГАЗель NEXT', price: 13000, category: 'transport' },
-        { id: 4, name: 'Mercedes-Benz Sprinter', price: 24000, category: 'transport' }
-    ],
-    goods: [
-        { id: 1, name: 'Гроб сосновый', price: 8900, category: 'goods' },
-        { id: 2, name: 'Гроб дубовый', price: 35000, category: 'goods' },
-        { id: 3, name: 'Венок траурный', price: 3500, category: 'goods' },
-        { id: 4, name: 'Крест деревянный', price: 2800, category: 'goods' }
-    ],
-    services: [
-        { id: 1, name: 'Копка могилы (ручная)', price: 8000, category: 'services' },
-        { id: 2, name: 'Копка могилы (механизированная)', price: 12000, category: 'services' },
-        { id: 3, name: 'Отпевание в церкви', price: 5000, category: 'services' },
-        { id: 4, name: 'Оформление документов', price: 3500, category: 'services' }
-    ]
-};
+let demoItems = {};
 
 // Рендеринг выбранных элементов
 function renderItems() {
@@ -73,7 +55,7 @@ function renderItems() {
         items.forEach((item, index) => {
             const itemTotal = item.price * item.quantity;
             totalPrice += itemTotal;
-            totalDetails.push({ name: item.name, price: itemTotal, quantity: item.quantity });
+            totalDetails.push({ name: item.name, price: itemTotal, quantity: item.quantity, is_full: item.is_full });
 
             const itemDiv = document.createElement('div');
             itemDiv.className = 'calc-item';
@@ -86,7 +68,7 @@ function renderItems() {
                     <div class="calc-item-quantity">
                         <button class="quantity-btn" data-category="${category}" data-index="${index}" data-delta="-1">-</button>
                         <span class="quantity-value">${item.quantity}</span>
-                        <button class="quantity-btn" data-category="${category}" data-index="${index}" data-delta="1">+</button>
+                        <button class="quantity-btn" ${item.is_full ? 'disabled' : ''} data-category="${category}" data-index="${index}" data-delta="1">+</button>
                     </div>
                     <button class="calc-item-remove" data-category="${category}" data-index="${index}">✕</button>
                 </div>
@@ -127,21 +109,41 @@ function renderItems() {
 }
 
 // Добавление элемента
-function addItem(category, itemId) {
+function addItem(category, itemId, event) {
+    console.log(event);
     const itemsList = demoItems[category];
     const item = itemsList.find(i => i.id === itemId);
 
     if (!item) return;
 
     const existingIndex = calculatorItems[category].findIndex(i => i.id === item.id);
-
+    console.log(itemId);
+    let difference = 0;
     if (existingIndex !== -1) {
-        calculatorItems[category][existingIndex].quantity += 1;
+        let newQuantity = calculatorItems[category][existingIndex].quantity + 1;
+        difference = demoItems[category][itemId]["available_stock"] - newQuantity;
+        console.log(difference);
+        calculatorItems[category][existingIndex].quantity += 1
+        if (difference === 0) {
+            calculatorItems[category][existingIndex].is_full = true;
+        }
     } else {
-        calculatorItems[category].push({
-            ...item,
-            quantity: 1
-        });
+        difference = demoItems[category][itemId-1]["available_stock"] - 1;
+        if (difference === 0) {
+            calculatorItems[category].push({
+                ...item,
+                quantity: 1,
+                is_full: true,
+                item_id: itemId
+            });
+        }else{
+            calculatorItems[category].push({
+                ...item,
+                quantity: 1,
+                is_full: false,
+                item_id: itemId
+            });
+        }
     }
 
     renderItems();
@@ -161,6 +163,10 @@ function changeQuantity(category, index, delta) {
     if (newQuantity <= 0) {
         removeItem(category, index);
     } else {
+        let difference = demoItems[category][item.item_id]["available_stock"] - newQuantity;
+        console.log(difference);
+        item.quantity += 1
+        item.is_full = difference === 0;
         item.quantity = newQuantity;
         renderItems();
     }
@@ -232,9 +238,9 @@ function showSelectionModal(category) {
 
     // Обработчики кнопок
     modal.querySelectorAll('.selection-item-add').forEach((btn, idx) => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
             const itemId = items[idx].id;
-            addItem(category, itemId);
+            addItem(category, itemId, e);
             modal.remove();
             document.body.style.overflow = '';
         });
@@ -275,10 +281,65 @@ document.addEventListener('click', (e) => {
             calculatorItems.services.length) {
             alert('Добавьте хотя бы одну услугу для оформления заказа');
         } else {
-            alert('Заказ оформлен! Наш менеджер свяжется с вами.');
+            document.getElementById('order_modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            temp_order_data = {
+                "transport": JSON.stringify(calculatorItems.transport),
+                "goods": JSON.stringify(calculatorItems.goods),
+                "services": JSON.stringify(calculatorItems.services)
+            }
         }
     }
 });
+
+function orderCreate() {
+    let order_modal_name = document.getElementById("order_modal_name");
+    let order_modal_phone = document.getElementById("order_modal_phone");
+    let order_modal_email = document.getElementById("order_modal_email");
+    if (order_modal_name.value.trim() === '') {
+        Toast.warning("Введите имя!");
+        return;
+    }
+    if (order_modal_phone.value.trim() === '') {
+        Toast.warning("Введите имя!");
+        return;
+    }
+    if (order_modal_email.value.trim() === '') {
+        Toast.warning("Введите имя!");
+        return;
+    }
+    if (temp_order_data != null) {
+        $.post(
+            "../../server/post/userOrdersHandler.php",
+            {
+                "type": "newOrder",
+                "userName": order_modal_name.value.trim(),
+                "userPhone": order_modal_phone.value.trim(),
+                "userEmail": order_modal_email.value.trim(),
+                "transport": temp_order_data.transport,
+                "goods": temp_order_data.goods,
+                "services": temp_order_data.services
+            },
+            function (data) {
+                let response = JSON.parse(data);
+                if (response.response && response.response.code === 200) {
+                    Toast.success("Заказ успешно оформлен.");
+                    Toast.success("21424332 - Ваш номер заказа");
+                    document.getElementById('order_modal').classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        )
+    }
+}
+
+function orderClose() {
+    document.getElementById("order_modal_name").value = '';
+    document.getElementById("order_modal_phone").value = '';
+    document.getElementById("order_modal_email").value = '';
+    document.getElementById('order_modal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
 
 // Экранирование HTML
 function escapeHtml(text) {

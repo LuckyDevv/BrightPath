@@ -1,0 +1,1 @@
+SELECT COALESCE(SUM(`summary`), 0) AS `total_yesterday` FROM `orders` WHERE `created_at` >= CURDATE() - INTERVAL 1 DAY AND `created_at` < CURDATE();

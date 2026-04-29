@@ -1,0 +1,346 @@
+/* ===== ДЕТАЛЬНАЯ СТРАНИЦА УСЛУГИ ===== */
+
+/* Хлебные крошки */
+.breadcrumbs {
+    background-color: #f5f5f5;
+    padding: 12px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.breadcrumbs a {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+    color: #d4a373;
+}
+
+.breadcrumbs .separator {
+    color: #999;
+    margin: 0 8px;
+    font-size: 1rem;
+}
+
+.breadcrumbs .current {
+    color: #0a0a0a;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Детальная страница */
+.service-detail {
+    padding: 50px 0 70px;
+    background-color: #ffffff;
+}
+
+.service-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 50px;
+}
+
+/* Левая колонка */
+.service-category-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background-color: #f0f0f0;
+    color: #d4a373;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+}
+
+.service-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.service-price-block {
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border: 1px solid #eee;
+}
+
+.service-price {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #d4a373;
+    line-height: 1.2;
+    margin-bottom: 5px;
+}
+
+.service-price-note {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.service-actions-detail {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.service-actions-detail .btn,
+.service-actions-detail .btn-outline {
+    flex: 1;
+    text-align: center;
+}
+
+.service-description-full h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin: 30px 0 15px;
+}
+
+.service-description-full h3:first-of-type {
+    margin-top: 0;
+}
+
+.service-features,
+.docs-list {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.service-features li,
+.docs-list li {
+    margin-bottom: 10px;
+    padding-left: 25px;
+    position: relative;
+    font-size: 1rem;
+    color: #555;
+}
+
+.work-steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin: 20px 0 30px;
+}
+
+.step {
+    text-align: center;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    background: #d4a373;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 0 auto 10px;
+}
+
+.step-text {
+    font-size: 0.8rem;
+    color: #555;
+    line-height: 1.4;
+}
+
+.important-info {
+    background: #fafafa;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 4px solid #d4a373;
+}
+
+.important-info p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.important-info p:last-child {
+    margin-bottom: 0;
+}
+
+/* Правая колонка */
+.service-sidebar {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.sidebar-card {
+    background: #fafafa;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid #eee;
+}
+
+.sidebar-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #0a0a0a;
+}
+
+.emergency-phone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.emergency-phone svg {
+    stroke: #d4a373;
+}
+
+.emergency-phone a {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0a0a0a;
+    text-decoration: none;
+}
+
+.emergency-text {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.quick-calc .form-group {
+    margin-bottom: 15px;
+}
+
+.quick-calc input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.quick-calc .btn {
+    width: 100%;
+    text-align: center;
+}
+
+.advantages-list {
+    list-style: none;
+}
+
+.advantages-list li {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Похожие услуги */
+.similar-services {
+    padding: 50px 0 70px;
+    background-color: #fafafa;
+}
+
+.similar-services h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.similar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.similar-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid #eee;
+    transition: all 0.3s;
+}
+
+.similar-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    border-color: #d4a373;
+}
+
+.similar-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.similar-card p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.similar-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #d4a373;
+    margin-bottom: 15px;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .service-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .service-sidebar {
+        position: static;
+    }
+
+    .work-steps {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .service-title {
+        font-size: 1.8rem;
+    }
+
+    .work-steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .similar-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .service-actions-detail {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .work-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .similar-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .service-price {
+        font-size: 1.6rem;
+    }
+}

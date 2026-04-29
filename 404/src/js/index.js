@@ -1,4 +1,3 @@
-// ===== БУРГЕР МЕНЮ =====
 const burger = document.getElementById('burger');
 const nav = document.getElementById('nav');
 const overlay = document.getElementById('overlay');

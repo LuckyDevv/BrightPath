@@ -394,9 +394,6 @@ echo $twig->render("header.twig");
         <div class="container">
             <div class="vehicles-grid" id="vehiclesGrid">
                 <!-- Карточки будут добавляться через JavaScript -->
-                <?php
-
-                ?>
             </div>
 
             <!-- Сообщение о пустом результате -->

@@ -1,0 +1,1 @@
+SELECT `id`,`name`,`price`,`total_stock` as `available_stock` FROM `goods` WHERE `is_active`=1 AND `total_stock`>0

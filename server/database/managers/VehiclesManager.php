@@ -7,31 +7,22 @@ use PDO;
 use PDOException;
 use executors\VehiclesExecutor;
 
-class VehiclesManager
+class VehiclesManager extends Manager
 {
-    protected PDO $db;
-    private VehiclesExecutor $commands;
-    public bool $die = false;
+
     public function __construct()
     {
-        try {
-            @mkdir(__DIR__.'/../../logs/');
-            $this->db= new PDO("mysql:host=localhost;", "root", "5328alexRU");
-            $this->db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
-            $this->db->query("CREATE DATABASE IF NOT EXISTS `brightpath`;");
-            $this->db->query("SET NAMES utf8;");
-            $this->db->query("USE `brightpath`;");
-            $this->commands = new VehiclesExecutor();
-            $this->db->query($this->commands->createTable());
-        }catch (PDOException|Exception|Error $e) {
-            $this->die = true;
-            $this->createLog("VehiclesManager", $e);
-        }
+        parent::__construct(VehiclesExecutor::CREATE_TABLE());
     }
-    public function getAllVehicles(): array
+
+    public function getAllVehicles(bool $is_admin = false): array
     {
         try {
-            $stmt = $this->db->prepare($this->commands->getAllVehicles());
+            if ($is_admin) {
+                $stmt = $this->db->prepare(VehiclesExecutor::GET_ALL_VEHICLES_ADMIN());
+            }else{
+                $stmt = $this->db->prepare(VehiclesExecutor::GET_ALL_VEHICLES());
+            }
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException|Exception|Error $e) {
@@ -43,7 +34,7 @@ class VehiclesManager
     public function getImagePath(int $id): string|false
     {
         try {
-            $stmt = $this->db->prepare("SELECT `image_path` FROM `vehicles` WHERE `id`=:id");
+            $stmt = $this->db->prepare(VehiclesExecutor::GET_IMAGE_PATH());
             $stmt->bindValue(":id", $id, PDO::PARAM_INT);
             $stmt->execute();
             $ans = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -59,7 +50,7 @@ class VehiclesManager
     public function deleteVehicleById(int $id): bool
     {
         try {
-            $stmt = $this->db->prepare($this->commands->getDeleteVehicle());
+            $stmt = $this->db->prepare(VehiclesExecutor::DELETE_VEHICLE_BY_ID());
             $stmt->bindValue(":vehicleId", $id, PDO::PARAM_INT);
             return $stmt->execute();
         }catch (PDOException|Exception|Error $e) {
@@ -68,14 +59,14 @@ class VehiclesManager
         }
     }
 
-    public function getVehicleById(int $idVehicle, bool $ignoreActivity = false): array
+    public function getVehicleById(int $idVehicle, bool $isAdmin = false): array
     {
         try {
-            $command = $this->commands->getVehicleById();
-            if ($ignoreActivity) {
-                $command = str_replace(" AND `is_active`=1", '', $command);
+            if ($isAdmin) {
+                $stmt = $this->db->prepare(VehiclesExecutor::GET_VEHICLE_BY_ID_ADMIN());
+            }else{
+                $stmt = $this->db->prepare(VehiclesExecutor::GET_VEHICLE_BY_ID());
             }
-            $stmt = $this->db->prepare($command);
             $stmt->execute([':id' => $idVehicle]);
             $ans = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!is_array($ans)) {
@@ -99,10 +90,8 @@ class VehiclesManager
                     throw new Exception("Поле '$field' обязательно для заполнения");
                 }
             }
-
-            $stmt = $this->db->prepare($this->commands->addVehicle());
-
-            $stmt->execute([
+            $stmt = $this->db->prepare(VehiclesExecutor::ADD_VEHICLE());
+            $result = $stmt->execute([
                 ':name' => $data['name'],
                 ':image_path' => rtrim($data['image_path'], '/'),
                 ':category' => $data['category'] ?? 1,
@@ -116,13 +105,11 @@ class VehiclesManager
                 ':is_active' => $data['is_active'] ?? 1,
                 ':orders_count' => $data['orders_count'] ?? 0
             ]);
-
-            return $this->db->lastInsertId();
-
+            if ($result) return $this->db->lastInsertId();
         } catch (PDOException|Exception|Error $e) {
             $this->createLog("VehiclesManager", $e);
-            return false;
         }
+        return false;
     }
 
     public function changeVehicle(int $vehicleId, array $data): bool
@@ -164,19 +151,7 @@ class VehiclesManager
     public function getPopular(): array
     {
         try {
-            $stmt = $this->db->prepare($this->commands->getPopularVehicles());
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }catch (PDOException|Exception|Error $e) {
-            $this->createLog("VehiclesManager", $e);
-            return [];
-        }
-    }
-
-    public function getAllAdmin(): array
-    {
-        try {
-            $stmt = $this->db->prepare($this->commands->getAllVehiclesForAdmin());
+            $stmt = $this->db->prepare(VehiclesExecutor::GET_POPULAR());
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }catch (PDOException|Exception|Error $e) {
@@ -188,7 +163,7 @@ class VehiclesManager
     public function getSimilar(int $id, int $category): array
     {
         try {
-            $stmt = $this->db->prepare($this->commands->getSimilar());
+            $stmt = $this->db->prepare(VehiclesExecutor::GET_SIMILAR());
             $stmt->bindValue(':current_id', $id);
             $stmt->bindValue(':category', $category);
             $stmt->bindValue(':limit', 4, PDO::PARAM_INT);
@@ -200,21 +175,16 @@ class VehiclesManager
         }
     }
 
-    public function createLog(string $className, Exception|Error $exception): void
+    public function getAllForCalculator(): array
     {
-        $text = "[" . date("d.m.Y H:i:s") . "] Произошла ошибка в ".$className.": ".$exception->getMessage().". На строке ".$exception->getLine().", файл: ".$exception->getFile()."\n\n";
-        file_put_contents(__DIR__.'/../../logs/'.$className.'_Errors.log', $text, FILE_APPEND);
-    }
-
-    // ФУНКЦИЯ ДЛЯ ЛОГОВ ПРИ РАЗРАБОТКЕ
-    public function createCustomLog(string $text): void
-    {
-        $text = "[" . date("d.m.Y H:i:s") . "] Лог: ".$text."\n\n";
-        file_put_contents(__DIR__.'/../../logs/custom_log.log', $text, FILE_APPEND);
-    }
-
-    public function getLastInsertId(): false|string
-    {
-        return $this->db->lastInsertId();
+        try {
+            $stmt = $this->db->prepare(VehiclesExecutor::GET_ALL_FOR_CALCULATOR());
+            if ($stmt->execute()) {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+        }
+        return [];
     }
 }

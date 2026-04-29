@@ -1,33 +1,13 @@
 <?php
 
 require_once __DIR__.'/../../vendor/autoload.php';
+require_once __DIR__ . '/apiHelper.php';
 
 use managers\AgentsManager;
 
 $agentsManager = new AgentsManager();
 
-date_default_timezone_set('Europe/Moscow');
-
-function logging(string $text)
-{
-    file_put_contents(__DIR__.'/post_agents.log', $text."\n", FILE_APPEND);
-}
-
-const JSON_OPTIONS = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING;
-function error(string $message, int $code): never
-{
-    die(json_encode(['error' => ['message' => $message, 'code' => $code]], JSON_OPTIONS));
-}
-function response(string $message, int $code, int|null $id = null): never
-{
-    if ($id !== null) {
-        die(json_encode(['response' => ['message' => $message, 'code' => $code, 'vehicleId' => $id]], JSON_OPTIONS));
-    }else{
-        die(json_encode(['response' => ['message' => $message, 'code' => $code]], JSON_OPTIONS));
-    }
-}
-
-logging("Тип запроса: ".($_POST["type"] ?? "не передано"));
+logging("adminAgentHandler", "Тип запроса: ".($_POST["type"] ?? "не передано"));
 
 /**
  * @param string $path
@@ -35,20 +15,20 @@ logging("Тип запроса: ".($_POST["type"] ?? "не передано"));
  */
 function pushMainPhoto(string $path): void
 {
-    logging("Started photo uploading. Path: ".$path);
+    logging("adminAgentHandler", "Started photo uploading. Path: ".$path);
     $tmp = $_FILES["main_photo"]["tmp_name"];
     $image_name = $_FILES["main_photo"]["name"];
     $type = $_FILES["main_photo"]["type"];
-    logging("Photo meta. Name: ".$tmp.", image: ".$image_name.", type: ".$type);
+    logging("adminAgentHandler", "Photo meta. Name: ".$tmp.", image: ".$image_name.", type: ".$type);
     if ($type !== "image/jpeg" || !str_contains(mb_strtolower($image_name), "jpg")) {
         try {
-            logging("Converting to jpg");
+            logging("adminAgentHandler", "Converting to jpg");
             convertToJpg($tmp, $path);
         } catch (Exception $e) {
             error("Не удалось конвертировать файл: " . $e->getMessage(), 7);
         }
     } else {
-        logging("Moving tmp file");
+        logging("adminAgentHandler", "Moving tmp file");
         if (!move_uploaded_file($tmp, $path)) {
             error("Не удалось загрузить файл.", 8);
         }
@@ -110,7 +90,7 @@ switch ($_POST['type'] ?? null)
             } catch (DateMalformedStringException $e) {
                 error("Неверный формат даты", 3);
             }
-        }else { logging("Нет даты рождения"); return; } // todo: error
+        }else { logging("adminAgentHandler", "Нет даты рождения"); return; } // todo: error
         if (!isset($_POST['description']) || mb_strlen($_POST['description']) < 1) {
             error("Не введено описание", 4);
         }
@@ -139,7 +119,7 @@ switch ($_POST['type'] ?? null)
         }
         break;
     case "editAgent":
-        logging("Edit agent");
+        logging("adminAgentHandler", "Edit agent");
         $oldPost = $_POST;
         $_POST = json_decode($_POST['agentData'], true);
         if (!isset($_POST['agentId']) || !is_numeric($_POST['agentId']) || (int) $_POST['agentId'] <= 0) {
@@ -152,15 +132,15 @@ switch ($_POST['type'] ?? null)
         if (!isset($_POST['position']) || !is_numeric($_POST['position']) || (int) $_POST['position'] < 1 || (int) $_POST['position'] > 5) {
             error("Не выбрана должность", 2);
         }
-        logging("WFT");
-        logging("Existing: ".json_encode(empty($oldPost['existing_main_photo']), JSON_UNESCAPED_UNICODE));
+        logging("adminAgentHandler", "WFT");
+        logging("adminAgentHandler", "Existing: ".json_encode(empty($oldPost['existing_main_photo']), JSON_UNESCAPED_UNICODE));
         if (empty($oldPost['existing_main_photo'])) {
-            logging("Получение пути к изображению...");
+            logging("adminAgentHandler", "Получение пути к изображению...");
             $imagePath = $agentsManager->getImagePathById($agentId);
-            logging("Путь к изображению: ".$imagePath);
+            logging("adminAgentHandler", "Путь к изображению: ".$imagePath);
             if (!empty($imagePath)) {
-                logging("Loaded new main photo");
-                logging("Main photo data: ".json_encode($_FILES["main_photo"], JSON_UNESCAPED_UNICODE));
+                logging("adminAgentHandler", "Loaded new main photo");
+                logging("adminAgentHandler", "Main photo data: ".json_encode($_FILES["main_photo"], JSON_UNESCAPED_UNICODE));
                 if (empty($_FILES["main_photo"]) || empty($_FILES["main_photo"]["name"])) {
                     error("Не загружено основное фото", 3);
                 }else{
@@ -179,7 +159,7 @@ switch ($_POST['type'] ?? null)
                         error("Ошибка загрузки фото: ".$errors[$error], 4);
                     }
                     $path = __DIR__."/../../src/images/agents/".$imagePath;
-                    logging("Start updating main photo");
+                    logging("adminAgentHandler", "Start updating main photo");
                     pushMainPhoto($path);
                 }
             }
@@ -190,7 +170,7 @@ switch ($_POST['type'] ?? null)
             } catch (DateMalformedStringException $e) {
                 error("Неверный формат даты", 3);
             }
-        }else { logging("Нет даты рождения"); return; } // todo: error
+        }else { logging("adminAgentHandler", "Нет даты рождения"); return; } // todo: error
         if (!isset($_POST['description']) || mb_strlen($_POST['description']) < 1) {
             error("Не введено описание", 4);
         }
@@ -228,53 +208,5 @@ switch ($_POST['type'] ?? null)
         }
         break;
     default:
-        error("Неизсветный запрос", 55);
-}
-
-function convertToJpg($sourcePath, $destinationPath = null, $quality = 90)
-{
-    // Если путь назначения не указан, заменяем расширение
-    if ($destinationPath === null) {
-        $destinationPath = pathinfo($sourcePath, PATHINFO_DIRNAME) . '/'
-            . pathinfo($sourcePath, PATHINFO_FILENAME) . '.jpg';
-    }
-
-    // Получаем тип изображения
-    $imageInfo = getimagesize($sourcePath);
-    $mimeType = $imageInfo['mime'];
-
-    // Создаём ресурс в зависимости от типа
-    switch ($mimeType) {
-        case 'image/jpeg':
-            $image = imagecreatefromjpeg($sourcePath);
-            break;
-        case 'image/png':
-            $image = imagecreatefrompng($sourcePath);
-            // Сохраняем прозрачность, заменяя её на белый фон
-            $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
-            $white = imagecolorallocate($bg, 255, 255, 255);
-            imagefill($bg, 0, 0, $white);
-            imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
-            $image = $bg;
-            break;
-        case 'image/webp':
-            $image = imagecreatefromwebp($sourcePath);
-            break;
-        case 'image/gif':
-            $image = imagecreatefromgif($sourcePath);
-            break;
-        case 'image/bmp':
-            $image = imagecreatefrombmp($sourcePath);
-            break;
-        default:
-            throw new Exception("Неподдерживаемый тип изображения: $mimeType");
-    }
-
-    // Сохраняем как JPG
-    imagejpeg($image, $destinationPath, $quality);
-
-    // Освобождаем память
-    imagedestroy($image);
-
-    return $destinationPath;
+        error("Неизвестный запрос", 55);
 }

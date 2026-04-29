@@ -141,7 +141,6 @@ function renderAgents(agents) {
                 <div class="vehicle-stats">
                     <div class="vehicle-stat">
                         <div class="vehicle-stat-value">${agent.events_count}</div>
-                        <div class="vehicle-stat-value">${agent.events_count}</div>
                         <div class="vehicle-stat-label">мероприятий</div>
                     </div>
                 </div>

@@ -1,0 +1,1 @@
+SELECT `role` FROM `admin_users` WHERE `login` = :login;

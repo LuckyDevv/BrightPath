@@ -1,0 +1,1 @@
+SELECT COALESCE(ROUND(SUM(`summary`) / COUNT(*), 2), 0) AS `avg_check_all_time` FROM `orders`;

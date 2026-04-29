@@ -1,0 +1,1 @@
+UPDATE `services` SET `name`=:name,`category`=:category,`description`=:description,`what_includes`=:what_includes,`price`=:price,`is_active`=:is_active WHERE `id` = :id;

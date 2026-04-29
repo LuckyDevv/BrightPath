@@ -1,0 +1,1 @@
+SELECT * FROM `goods` WHERE `id`=:id AND `is_active`=1 AND `total_stock`>0;

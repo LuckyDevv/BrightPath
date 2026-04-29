@@ -1,0 +1,1 @@
+INSERT INTO `orders` (`transport`,`goods`,`services`,`userName`,`userPhone`,`userEmail`,`summary`) VALUES (:transport, :goods, :services, :userName, :userPhone, :userEmail, :summary);

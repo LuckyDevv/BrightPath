@@ -1,0 +1,1 @@
+SELECT `id`,`name`,`image_path`,`category`,`material`,`total_stock`,`description_short`,`price` FROM `goods` WHERE `is_active`=1 AND `total_stock`>0

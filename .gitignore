@@ -1,10 +1,6 @@
 /server/logs/
 /vehicle_detail/
 /server/twig/cache/
-/server/post/post_vehicles.log
-/crm/test.php
-/server/post/post_agents.log
-/server/post/post_admins.log
 /additional_1.jpg
 /additional_2.jpg
 /additional_3.jpg

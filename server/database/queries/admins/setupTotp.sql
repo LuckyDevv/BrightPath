@@ -1,0 +1,1 @@
+UPDATE `admin_users` SET `is_2fa_enabled` = :is_2fa_enabled, `totp_secret` = :totp_secret WHERE `login` = :login;

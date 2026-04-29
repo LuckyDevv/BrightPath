@@ -361,7 +361,7 @@ body {
 .search-bar {
     flex: 1;
     position: relative;
-    min-width: 250px;
+    min-width: 200px;
 }
 
 .search-bar input {
@@ -1006,4 +1006,129 @@ input[type="date"]:focus {
     color: #999;
     margin-top: 1px;
     display: block;
+}
+/* ===== МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ АДМИНА ===== */
+.readonly-field {
+    background-color: #f5f5f5;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.status-with-button {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.status-with-button input {
+    flex: 1;
+}
+
+.btn-block {
+    padding: 10px 16px;
+    background-color: #c62828;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background 0.2s;
+    white-space: nowrap;
+    width: 150px;
+}
+
+.btn-block:hover {
+    background-color: #b71c1c;
+}
+
+.btn-block.unblock {
+    background-color: #2e7d32;
+}
+
+.btn-block.unblock:hover {
+    background-color: #1b5e20;
+}
+
+.form-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #ddd, transparent);
+    margin: 25px 0;
+}
+
+.info-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #d4a373;
+}
+
+.status-badge {
+    display: inline-block;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.badge.enabled {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge.disabled {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.btn-reset-2fa {
+    padding: 10px 16px;
+    background-color: white;
+    border: 1px solid #d4a373;
+    color: #d4a373;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background 0.2s;
+    white-space: nowrap;
+    width: 150px;
+}
+
+.btn-reset-2fa:hover {
+    background-color: #d4a373;
+    color: white;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.modal-cancel {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.modal-cancel:hover {
+    border-color: #d4a373;
+    color: #d4a373;
+}
+
+.form-actions .modal-submit {
+    flex: 1;
 }

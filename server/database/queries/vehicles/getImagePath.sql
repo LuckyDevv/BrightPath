@@ -1,0 +1,1 @@
+SELECT `image_path` FROM `vehicles` WHERE `id`=:id;

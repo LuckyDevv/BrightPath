@@ -1,0 +1,1 @@
+UPDATE `admin_users` SET `totp_secret` = NULL, `is_2fa_enabled`=0 WHERE `id` = :id;

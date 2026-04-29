@@ -1,0 +1,1 @@
+INSERT INTO `services` (`name`, `category`, `description`, `what_includes`, `price`) VALUES (:name, :category, :description, :what_includes, :price);

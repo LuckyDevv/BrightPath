@@ -9,7 +9,32 @@
     grid-template-columns: 1fr 380px;
     gap: 30px;
 }
-
+.modal-header {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding: 20px 30px;
+    border-bottom: 1px solid #eee;
+    margin: 0;
+}
+.modal-submit {
+    width: 100%;
+    padding: 12px;
+    background: #d4a373;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 0;
+    transition: background 0.2s;
+}
+.modal-submit:hover {
+    background: #b5835a;
+}
 /* Левая колонка - форма */
 .calculator-form {
     background: white;

@@ -1,0 +1,1 @@
+SELECT COUNT(DISTINCT COALESCE(`userphone`, ''), COALESCE(`useremail`, '')) AS `unique_clients_yesterday` FROM `orders` WHERE `created_at` >= CURDATE() - INTERVAL 1 DAY AND `created_at` < CURDATE();

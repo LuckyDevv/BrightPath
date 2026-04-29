@@ -1,0 +1,1 @@
+SELECT `id`,`name`,`price`,`total_stock`-`reserved_stock` as `available_stock` FROM `vehicles` WHERE `is_active`=1 AND `total_stock`-`reserved_stock`>0;

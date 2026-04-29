@@ -1,0 +1,1 @@
+SELECT * FROM `goods` WHERE `id`=:id;

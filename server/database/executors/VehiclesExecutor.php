@@ -3,43 +3,58 @@ namespace executors;
 
 class VehiclesExecutor
 {
-    public function createTable(): false|string
+    public static function CREATE_TABLE(): false|string
     {
         return file_get_contents(__DIR__."/../schema/vehicle.sql");
     }
 
-    public function getAllVehicles(): false|string
+    public static function GET_ALL_VEHICLES(): false|string
     {
-        return file_get_contents(__DIR__."/../queries/vehicles/getAll.sql");
+        return file_get_contents(__DIR__ . "/../queries/vehicles/getAllVehicles.sql");
     }
 
-    public function getAllVehiclesForAdmin(): false|string
+    public static function GET_ALL_VEHICLES_ADMIN(): false|string
     {
-        return file_get_contents(__DIR__."/../queries/vehicles/getAllAdmin.sql");
+        return file_get_contents(__DIR__ . "/../queries/vehicles/getAllVehiclesAdmin.sql");
     }
 
-    public function addVehicle(): false|string
+    public static function ADD_VEHICLE(): false|string
     {
         return file_get_contents(__DIR__."/../queries/vehicles/addVehicle.sql");
     }
 
-    public function getPopularVehicles(): false|string
+    public static function GET_POPULAR(): false|string
     {
-        return file_get_contents(__DIR__."/../queries/vehicles/popularVehicles.sql");
+        return file_get_contents(__DIR__ . "/../queries/vehicles/getPopular.sql");
     }
 
-    public function getVehicleById(): false|string
+    public static function GET_VEHICLE_BY_ID(): false|string
     {
-        return file_get_contents(__DIR__."/../queries/vehicles/getById.sql");
+        return file_get_contents(__DIR__ . "/../queries/vehicles/getVehicleById.sql");
     }
 
-    public function getSimilar(): false|string
+    public static function GET_VEHICLE_BY_ID_ADMIN(): false|string
+    {
+        return file_get_contents(__DIR__ . "/../queries/vehicles/getVehicleByIdAdmin.sql");
+    }
+
+    public static function GET_SIMILAR(): false|string
     {
         return file_get_contents(__DIR__."/../queries/vehicles/getSimilar.sql");
     }
 
-    public function getDeleteVehicle(): false|string
+    public static function DELETE_VEHICLE_BY_ID(): false|string
     {
-        return file_get_contents(__DIR__."/../queries/vehicles/deleteVehicle.sql");
+        return file_get_contents(__DIR__ . "/../queries/vehicles/deleteVehicleById.sql");
+    }
+
+    public static function GET_IMAGE_PATH(): false|string
+    {
+        return file_get_contents(__DIR__ . "/../queries/vehicles/getImagePath.sql");
+    }
+
+    public static function GET_ALL_FOR_CALCULATOR(): false|string
+    {
+        return file_get_contents(__DIR__ . "/../queries/vehicles/getAllForCalculator.sql");
     }
 }

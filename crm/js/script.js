@@ -18,6 +18,7 @@ document.querySelectorAll('.nav-item[data-page]').forEach(item => {
             goods: ['Товары', 'Каталог ритуальных товаров'],
             agents: ['Агенты', 'Сотрудники агентства'],
             admins: ['Администраторы', 'Управление доступом'],
+            services: ['Ритуальные услуги', 'Каталог ритуальных услуг'],
             settings: ['Настройки', 'Параметры сайта']
         };
 
@@ -34,6 +35,9 @@ document.querySelectorAll('.nav-item[data-page]').forEach(item => {
                     break;
                 case "agents":
                     initAgents();
+                    break;
+                case "services":
+                    initServices();
                     break;
             }
         } catch (error) {
@@ -82,6 +86,16 @@ function initFilters() {
                 if (categoryCell) {
                     const categoryText = categoryCell.textContent.trim().toLowerCase();
                     if (!categoryText.includes(filterValues.category.toLowerCase())) {
+                        showRow = false;
+                    }
+                }
+            }
+            // Фильтр по категории (для услуг)
+            if (showRow && filterValues.category_service && filterValues.category_service !== 'all') {
+                const categoryCell = row.cells[2]; // Категория в 4-й колонке
+                if (categoryCell) {
+                    const categoryText = categoryCell.textContent.trim().toLowerCase();
+                    if (!categoryText.includes(filterValues.category_service.toLowerCase())) {
                         showRow = false;
                     }
                 }
