@@ -47,6 +47,7 @@ $data = [
     'image' => $image,
     'description' => $agent['description'],
     'biographic' => $agent['biographic'],
+    'page_end' => $twig->render('page_end.twig', ['basePath' => '../', "config" => new \lib\Config()->getConfig()])
 ];
 
 try {
@@ -66,7 +67,7 @@ function notFound($twig, AgentsManager $agentsManager): void
     try {
         echo $twig->render('404.twig');
     } catch (\Twig\Error\LoaderError|\Twig\Error\RuntimeError|\Twig\Error\SyntaxError $e) {
-        $agentsManager->createLog("vehicle", $e);
+        //$agentsManager->createLog("vehicle", $e);
     }
     exit;
 }

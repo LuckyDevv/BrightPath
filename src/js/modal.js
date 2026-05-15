@@ -9,6 +9,20 @@ function openModal(e){
     document.body.style.overflow = 'hidden'; // Запрещаем скролл
 }
 
+function getBasePath() {
+    // Получаем путь текущей страницы (например: /catalog/goods/item.html)
+    let path = window.location.pathname;
+
+    // Убираем домен и файл в конце (если есть)
+    let pathSegments = path.split('/').filter(segment => segment !== '' && !segment.includes('.'));
+
+    // Количество папок от корня = количество сегментов пути
+    let depth = pathSegments.length;
+
+    // Формируем путь к корню: если depth=0 -> './', depth=1 -> '../', depth=2 -> '../../'
+    return depth === 0 ? './' : '../'.repeat(depth);
+}
+
 // Закрытие модального окна
 function closeModal() {
     modalOverlay.classList.remove('active');
@@ -88,19 +102,51 @@ if (contactForm) {
             return; // Прерываем отправку
         }
 
-        // Здесь можно добавить отправку данных на сервер
-        console.log('Форма отправлена');
+        let name = document.getElementById("modalName").value;
+        let email = document.getElementById("modalEmail").value;
+        let phone = document.getElementById("modalPhone").value;
+        console.log(name + ", " + email + ", " + phone);
+        let iff = name != null && email != null && phone != null;
+        console.log(`If: ${iff}`)
 
-        // Показываем сообщение об успехе
-        contactForm.style.display = 'none';
-        const success = document.getElementById('modalSuccess');
-        if (success) success.classList.add('active');
-
-        // Автоматическое закрытие через 3 секунды
-        setTimeout(() => {
-            closeModal();
-
-        }, 3000);
+        if (name != null && email != null && phone != null) {
+            $.post(getBasePath()+"server/post/userRequestsHandler.php", {
+                "type": "sendRequest",
+                "name": name,
+                "email": email,
+                "phone": phone
+            }, function (data) {
+                console.log("Ответ пришёл");
+                let response;
+                try {
+                    response = JSON.parse(data);
+                    console.log("Ответ спарсирован");
+                }catch(e){
+                    console.log(e);
+                    Toast.error("Ошибка подключения к серверу");
+                    return;
+                }
+                console.log(response);
+                if (response.response) {
+                    // Здесь можно добавить отправку данных на сервер
+                    console.log('Форма отправлена');
+                    // Показываем сообщение об успехе
+                    contactForm.style.display = 'none';
+                    const success = document.getElementById('modalSuccess');
+                    if (success) success.classList.add('active');
+                    // Автоматическое закрытие через 3 секунды
+                    setTimeout(() => {
+                        closeModal();
+                    }, 3000);
+                }else if (response.error) {
+                    Toast.error(`Ошибка [${response.error.code}]: ${response.error.message}`);
+                }else{
+                    Toast.error("Ошибка подключения к серверу");
+                }
+            });
+        }else{
+            Toast.warning("Введите контактные данные!");
+        }
     });
 }
 

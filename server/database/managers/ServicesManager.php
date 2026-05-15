@@ -137,4 +137,70 @@ class ServicesManager extends Manager
         }
         return [];
     }
+
+    public function getForPreset(array $ids): array
+    {
+        try {
+            $placeholders = [];
+            foreach ($ids as $key => $id) {
+                $placeholders[] = ":id{$key}";
+            }
+            $placeholders_str = implode(',', $placeholders);
+
+            $sql = "SELECT `id`,`name`,`price`,1 as `quantity` FROM `services` WHERE `id` IN ({$placeholders_str})";
+
+            $stmt = $this->db->prepare($sql);
+
+            // Привязываем значения
+            foreach ($ids as $key => $id) {
+                $stmt->bindValue(":id{$key}", $id, PDO::PARAM_INT);
+            }
+            if ($stmt->execute()) {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("ServicesManager", $e);
+        }
+        return [];
+    }
+
+    public function getAllForSelect(): array
+    {
+        try {
+            $stmt = $this->db->query("SELECT `id`, `name`, `price` FROM `services` WHERE `is_active` = 1");
+            if ($stmt->execute()) {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("ServicesManager", $e);
+        }
+        return [];
+    }
+
+    public function getServiceByIdForCart(int $serviceId): array
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `id`,`name`,`price`,1 as `available_stock` FROM `services` WHERE `id`=:id AND `is_active`=1;");
+            $stmt->bindParam(":id", $serviceId, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("ServicesManager", $e);
+        }
+        return [];
+    }
+
+    public function order(int $id, int $quantity): bool
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE `services` SET `orders_count` = `orders_count` + :quantity WHERE `id` = :id;");
+            $stmt->bindParam(":quantity", $quantity, PDO::PARAM_INT);
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("ServicesManager", $e);
+        }
+        return false;
+    }
 }

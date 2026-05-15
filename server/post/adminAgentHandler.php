@@ -3,56 +3,52 @@
 require_once __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__ . '/apiHelper.php';
 
+use lib\AdminLogger;
 use managers\AgentsManager;
 
 $agentsManager = new AgentsManager();
 
-logging("adminAgentHandler", "Тип запроса: ".($_POST["type"] ?? "не передано"));
-
-/**
- * @param string $path
- * @return void
- */
 function pushMainPhoto(string $path): void
 {
-    logging("adminAgentHandler", "Started photo uploading. Path: ".$path);
     $tmp = $_FILES["main_photo"]["tmp_name"];
     $image_name = $_FILES["main_photo"]["name"];
     $type = $_FILES["main_photo"]["type"];
-    logging("adminAgentHandler", "Photo meta. Name: ".$tmp.", image: ".$image_name.", type: ".$type);
     if ($type !== "image/jpeg" || !str_contains(mb_strtolower($image_name), "jpg")) {
         try {
-            logging("adminAgentHandler", "Converting to jpg");
             convertToJpg($tmp, $path);
         } catch (Exception $e) {
             error("Не удалось конвертировать файл: " . $e->getMessage(), 7);
         }
     } else {
-        logging("adminAgentHandler", "Moving tmp file");
         if (!move_uploaded_file($tmp, $path)) {
             error("Не удалось загрузить файл.", 8);
         }
     }
 }
 
+$admin_login = getAdminLoginFromSession();
+
 switch ($_POST['type'] ?? null)
 {
     case "getById":
+        createAdminLog($admin_login, ["result"=>"processing"]);
         if (!empty($_POST['agentId']) && is_numeric($_POST['agentId'])) {
             $agentId = (int) $_POST['agentId'];
             $agent = $agentsManager->getById($agentId);
+            createAdminLog($admin_login, ["agentId" => $agentId, "result"=>"success"]);
             response(json_encode($agent, JSON_OPTIONS), 0);
         }else{
             error("Не передан ID агента", 1);
         }
         break;
     case "addAgent":
-        $_POST = json_decode($_POST['agentData'], true);
-        if (!isset($_POST['name']) || mb_strlen($_POST['name']) < 1 || mb_strlen($_POST['name']) > 255) {
+        createAdminLog($admin_login, ["result"=>"processing"]);
+        $agentData = json_decode($_POST['agentData'], true);
+        if (!isset($agentData['name']) || mb_strlen($agentData['name']) < 1 || mb_strlen($agentData['name']) > 255) {
             error("Не введено ФИО", 1);
         }
-        $name = $_POST['name'];
-        if (!isset($_POST['position']) || !is_numeric($_POST['position']) || (int) $_POST['position'] < 1 || (int) $_POST['position'] > 5) {
+        $name = $agentData['name'];
+        if (!isset($agentData['position']) || !is_numeric($agentData['position']) || (int) $agentData['position'] < 1 || (int) $agentData['position'] > 5) {
             error("Не выбрана должность", 2);
         }
         if (empty($_FILES["main_photo"]) || empty($_FILES["main_photo"]["name"])) {
@@ -84,22 +80,22 @@ switch ($_POST['type'] ?? null)
             }
             pushMainPhoto(__DIR__.$path);
         }
-        if (isset($_POST['birthdate']) || strlen($_POST['birthdate']) > 0) {
+        if (isset($agentData['birthdate']) || strlen($agentData['birthdate']) > 0) {
             try {
-                $birthdate = new DateTime($_POST['birthdate']);
+                $birthdate = new DateTime($agentData['birthdate']);
             } catch (DateMalformedStringException $e) {
                 error("Неверный формат даты", 3);
             }
-        }else { logging("adminAgentHandler", "Нет даты рождения"); return; } // todo: error
-        if (!isset($_POST['description']) || mb_strlen($_POST['description']) < 1) {
+        }else error("Не введена дата рождения", 10);
+        if (!isset($agentData['description']) || mb_strlen($agentData['description']) < 1) {
             error("Не введено описание", 4);
         }
-        if (!isset($_POST['biographic']) || mb_strlen($_POST['biographic']) < 1) {
+        if (!isset($agentData['biographic']) || mb_strlen($agentData['biographic']) < 1) {
             error("Не введена биография", 5);
         }
-        $position = (int) $_POST['position'];
-        $description = $_POST['description'];
-        $biographic = $_POST['biographic'];
+        $position = (int) $agentData['position'];
+        $description = $agentData['description'];
+        $biographic = $agentData['biographic'];
         $result = $agentsManager->addAgent([
             "name" => $name,
             "position" => $position,
@@ -119,28 +115,21 @@ switch ($_POST['type'] ?? null)
         }
         break;
     case "editAgent":
-        logging("adminAgentHandler", "Edit agent");
-        $oldPost = $_POST;
-        $_POST = json_decode($_POST['agentData'], true);
-        if (!isset($_POST['agentId']) || !is_numeric($_POST['agentId']) || (int) $_POST['agentId'] <= 0) {
+        createAdminLog($admin_login, ["result"=>"processing"]);
+        $agentData = json_decode($_POST['agentData'], true);
+        if (!isset($agentData['agentId']) || !is_numeric($agentData['agentId']) || (int) $agentData['agentId'] <= 0) {
             error("Не передан ID агента", 7);
         }
-        $agentId = (int) $_POST['agentId'];
-        if (!isset($_POST['name']) || mb_strlen($_POST['name']) < 1 || mb_strlen($_POST['name']) > 255) {
+        $agentId = (int) $agentData['agentId'];
+        if (!isset($agentData['name']) || mb_strlen($agentData['name']) < 1 || mb_strlen($agentData['name']) > 255) {
             error("Не введено ФИО", 1);
         }
-        if (!isset($_POST['position']) || !is_numeric($_POST['position']) || (int) $_POST['position'] < 1 || (int) $_POST['position'] > 5) {
+        if (!isset($agentData['position']) || !is_numeric($agentData['position']) || (int) $agentData['position'] < 1 || (int) $agentData['position'] > 5) {
             error("Не выбрана должность", 2);
         }
-        logging("adminAgentHandler", "WFT");
-        logging("adminAgentHandler", "Existing: ".json_encode(empty($oldPost['existing_main_photo']), JSON_UNESCAPED_UNICODE));
-        if (empty($oldPost['existing_main_photo'])) {
-            logging("adminAgentHandler", "Получение пути к изображению...");
+        if (empty($_POST['existing_main_photo'])) {
             $imagePath = $agentsManager->getImagePathById($agentId);
-            logging("adminAgentHandler", "Путь к изображению: ".$imagePath);
             if (!empty($imagePath)) {
-                logging("adminAgentHandler", "Loaded new main photo");
-                logging("adminAgentHandler", "Main photo data: ".json_encode($_FILES["main_photo"], JSON_UNESCAPED_UNICODE));
                 if (empty($_FILES["main_photo"]) || empty($_FILES["main_photo"]["name"])) {
                     error("Не загружено основное фото", 3);
                 }else{
@@ -159,35 +148,44 @@ switch ($_POST['type'] ?? null)
                         error("Ошибка загрузки фото: ".$errors[$error], 4);
                     }
                     $path = __DIR__."/../../src/images/agents/".$imagePath;
-                    logging("adminAgentHandler", "Start updating main photo");
                     pushMainPhoto($path);
                 }
             }
         }
-        if (isset($_POST['birthdate']) || strlen($_POST['birthdate']) > 0) {
+        if (isset($agentData['birthdate']) || strlen($agentData['birthdate']) > 0) {
             try {
-                $birthdate = new DateTime($_POST['birthdate']);
+                $birthdate = new DateTime($agentData['birthdate']);
             } catch (DateMalformedStringException $e) {
                 error("Неверный формат даты", 3);
             }
-        }else { logging("adminAgentHandler", "Нет даты рождения"); return; } // todo: error
-        if (!isset($_POST['description']) || mb_strlen($_POST['description']) < 1) {
+        }else error("Не введена дата рождения", 10);
+        if (!isset($agentData['description']) || mb_strlen($agentData['description']) < 1) {
             error("Не введено описание", 4);
         }
-        if (!isset($_POST['biographic']) || mb_strlen($_POST['biographic']) < 1) {
+        if (!isset($agentData['biographic']) || mb_strlen($agentData['biographic']) < 1) {
             error("Не введена биография", 5);
         }
-        $name = $_POST['name'];
-        $position = (int) $_POST['position'];
-        $description = $_POST['description'];
-        $biographic = $_POST['biographic'];
+        $name = $agentData['name'];
+        $position = (int) $agentData['position'];
+        $description = $agentData['description'];
+        $biographic = $agentData['biographic'];
         if ($agentsManager->updateAgent($agentId, $name, $birthdate, $position, $description, $biographic)) {
+            createAdminLog($admin_login, [
+                "agentId"=>$agentId,
+                "name"=>$name,
+                "position"=>$position,
+                "birthdate"=>$_POST['birthdate'],
+                "description"=>$description,
+                "biographic"=>$biographic,
+                "result"=>"success",
+            ]);
             response("Успешно изменено", 200);
         }else{
             error("Не удалось сохранить изменения", 6);
         }
         break;
     case "deleteAgent":
+        createAdminLog($admin_login, ["result"=>"processing"]);
         if (!empty($_POST['agentId']) && is_numeric($_POST['agentId'])) {
             $agentId = (int) $_POST['agentId'];
             $imagePath = $agentsManager->getImagePathById($agentId);
@@ -196,6 +194,7 @@ switch ($_POST['type'] ?? null)
                     unlink(__DIR__.'/../../src/images/agents/'.$imagePath);
                 }
                 if ($agentsManager->deleteAgent($agentId)) {
+                    createAdminLog($admin_login, ["agentId"=>$agentId, "result"=>"success"]);
                     response("Успешно удалено", 200);
                 }else{
                     error("Не удалось удалить", 1);
@@ -209,4 +208,10 @@ switch ($_POST['type'] ?? null)
         break;
     default:
         error("Неизвестный запрос", 55);
+}
+
+function createAdminLog(string $admin_login, array $data): void
+{
+    $adminLogger = new AdminLogger();
+    $adminLogger->log("adminAgentHandler", $admin_login, $_POST['type'], $data);
 }

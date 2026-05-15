@@ -1,9 +1,31 @@
 <?php
 include_once __DIR__."/../../vendor/autoload.php";
+
+use managers\AdminsManager;
 use managers\GoodsManager;
+use managers\SessionManager;
+
+$adminsManager = new AdminsManager();
+if (isset($_COOKIE['session_id'])) {
+    if (is_numeric($_COOKIE['session_id'])) {
+        $login = new SessionManager()->getLoginById((int)$_COOKIE['session_id']);
+        if ($login === false) {
+            not_authorized();
+        }
+    }else not_authorized();
+}else not_authorized();
+$role = $adminsManager->getRole($login);
+if ($role !== 'admin' && $role !== 'manager') {
+    exit("У вас нет доступа к данной странице!");
+}
+function not_authorized(): never {
+    setcookie('session_id', '', time() - 3600, '/', '', false);
+    setcookie('login', '', time() - 3600, '/', '', false);
+    header('Location: ../auth.php');
+    exit;
+}
 $goodsManager = new GoodsManager();
 $allGoods = $goodsManager->getAllGoods(true);
-
 // Вспомогательные функции (можно вынести в отдельный файл)
 function getCategoryName($category): string
 {
@@ -27,7 +49,6 @@ function upfirstutf(string $str): string
 ?>
 <div class="page-goods">
     <div class="page-header-actions">
-        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <input type="text" placeholder="Поиск по названию...">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -61,7 +82,7 @@ function upfirstutf(string $str): string
                 <option value="неактивен">Неактивен</option>
             </select>
         </div>
-        <button class="btn-add">+</button>
+        <button class="btn-add" onclick="goodsAdd()">+</button>
     </div>
 
     <table class="data-table">
@@ -83,8 +104,9 @@ function upfirstutf(string $str): string
         $placeholder = '../../src/images/no-image.jpg';
         foreach ($allGoods as $goods) {
             $img = "../../src/images/goods/".$goods["image_path"];
+            $action = $role == 'admin' ? "<button class='btn-icon delete' onclick='goodsRemove(".$goods["id"].")'>🗑️</button>" : '';
             echo "
-        <tr>
+        <tr id='tr_".$goods["id"]."'>
             <td>".$goods["id"]."</td>
             <td><img src='".$img."' class='table-thumb' onerror='this.src=".$placeholder."'></td>
             <td>".$goods["name"]."</td>
@@ -96,11 +118,100 @@ function upfirstutf(string $str): string
             <td>
                 <button class='btn-icon view' onclick='goodsView(".$goods["id"].")'>👁️</button>
                 <button class='btn-icon edit' onclick='goodsEdit(".$goods["id"].")'>✏️</button>
-                <button class='btn-icon delete' onclick='goodsRemove(".$goods["id"].")'>🗑️</button>
+                {$action}
             </td>
         </tr>";
         }
         ?>
         </tbody>
     </table>
+</div>
+<!-- Модальное окно товара -->
+<div class="modal-overlay" id="gds_modal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 id="gds_modal_title" class="modal-title"></h2>
+            <button class="modal-close" onclick="goodsClose()">&times;</button>
+        </div>
+        <div class="modal-content">
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Название товара</label>
+                    <input type="text" id="gds_modal_name" placeholder="Введите название...">
+                </div>
+
+                <div class="form-group">
+                    <label>Категория</label>
+                    <select id="gds_modal_category">
+                        <option value="1">Гробы</option>
+                        <option value="2">Венки</option>
+                        <option value="3">Кресты</option>
+                        <option value="4">Памятники</option>
+                        <option value="5">Одежда</option>
+                        <option value="6">Аксессуары</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Материал</label>
+                    <input type="text" id="gds_modal_material" placeholder="Например: сосна, дуб, гранит...">
+                </div>
+
+                <div class="form-group">
+                    <label>Размер (Д×Ш×В)</label>
+                    <input type="text" id="gds_modal_sizes" placeholder="Например: 200×60×40 см">
+                </div>
+
+                <div class="form-group">
+                    <label>Вес (кг)</label>
+                    <input type="number" id="gds_modal_weight" placeholder="Введите вес">
+                </div>
+
+                <div class="form-group">
+                    <label>Цена (₽)</label>
+                    <input type="number" id="gds_modal_price" placeholder="Введите цену" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label>На складе (шт.)</label>
+                    <input type="number" id="gds_modal_stock" placeholder="Количество" value="1">
+                </div>
+
+                <div class="form-group">
+                    <label>Короткое описание</label>
+                    <textarea rows="2" id="gds_modal_dsc_short" placeholder="Краткое описание товара"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Полное описание</label>
+                    <textarea rows="4" id="gds_modal_dsc_full" placeholder="Подробное описание товара"></textarea>
+                </div>
+
+                <!-- Фото -->
+                <div class="form-group">
+                    <label>Основное фото</label>
+                    <div class="image-upload-area" id="main_photo_area">
+                        <div class="image-preview" id="main_photo_preview">
+                            <img id="main_photo_img" src="" alt="Предпросмотр">
+                            <span class="preview-placeholder">Нет фото</span>
+                        </div>
+                        <input type="file" id="gds_modal_main_photo" accept="image/*" class="image-input">
+                        <button type="button" class="btn-upload" onclick="document.getElementById('gds_modal_main_photo').click()">Выбрать фото</button>
+                    </div>
+                </div>
+
+                <div class="form-group" id="gds_modal_creation_div">
+                    <label>Дата создания:</label>
+                    <input type="text" id="gds_modal_creation" disabled>
+                </div>
+
+                <div class="form-group" id="gds_modal_updated_div">
+                    <label>Последнее редактирование:</label>
+                    <input type="text" id="gds_modal_updated" disabled>
+                </div>
+
+                <button id="gds_modal_save" type="button" class="modal-submit" onclick="goodsSave()">Сохранить</button>
+            </form>
+        </div>
+    </div>
 </div>

@@ -211,8 +211,8 @@ function initVehicles() {
     console.log(vhc_modal_elements);
 }
 
-function vehicleView(vehicleId) {
-    if (vehicleId === undefined || vehicleId === null){
+async function vehicleView(vehicleId) {
+    if (vehicleId === undefined || vehicleId === null) {
         Toast.warning("Внимание [1]: Обнаружено изменение данных. Перезагрузите страницу.");
         return;
     }
@@ -222,7 +222,14 @@ function vehicleView(vehicleId) {
     }
     let vehicle_modal = document.getElementById("vhc_modal");
     if (vehicle_modal) {
-        $.post("../../server/post/adminVehicleHandler.php", {"type": "getById", "vehicleId": vehicleId}, function (data) {
+        const sessionId = getCookie('session_id');
+        const fingerprint = await collectFingerPrint();
+        $.post("../../server/post/adminVehicleHandler.php", {
+            "type": "getById",
+            "vehicleId": vehicleId,
+            "session_id": sessionId,
+            "fingerprint": fingerprint
+        }, function (data) {
             var data_parsed = JSON.parse(data);
             if (data_parsed.response != null) {
                 let vehicleData = JSON.parse(data_parsed.response.message);
@@ -235,17 +242,17 @@ function vehicleView(vehicleId) {
                 vehicle_modal.classList.add("active");
                 document.body.style.overflow = "hidden";
                 opened_vehicle = vehicleId;
-            }else if (data_parsed.error != null && data_parsed.error.code != null && data_parsed.error.message != null) {
+            } else if (data_parsed.error != null && data_parsed.error.code != null && data_parsed.error.message != null) {
                 Toast.error(`Ошибка сервера [${data_parsed.error.code}]: ${data_parsed.error.message}`);
             }
         });
-    }else{
+    } else {
         Toast.warning("Внимание [3]: Обнаружено изменение данных. Перезагрузите страницу.");
     }
 }
 
-function vehicleEdit(vehicleId) {
-    if (vehicleId === undefined || vehicleId === null){
+async function vehicleEdit(vehicleId) {
+    if (vehicleId === undefined || vehicleId === null) {
         Toast.warning("Внимание [1]: Обнаружено изменение данных. Перезагрузите страницу.");
         return;
     }
@@ -255,7 +262,14 @@ function vehicleEdit(vehicleId) {
     }
     let vehicle_modal = document.getElementById("vhc_modal");
     if (vehicle_modal) {
-        $.post("../../server/post/adminVehicleHandler.php", {"type": "getById", "vehicleId": vehicleId}, function (data) {
+        const sessionId = getCookie('session_id');
+        const fingerprint = await collectFingerPrint();
+        $.post("../../server/post/adminVehicleHandler.php", {
+            "type": "getById",
+            "vehicleId": vehicleId,
+            "session_id": sessionId,
+            "fingerprint": fingerprint
+        }, function (data) {
             var data_parsed = JSON.parse(data);
             if (data_parsed.response != null) {
                 let vehicleData = JSON.parse(data_parsed.response.message);
@@ -268,34 +282,41 @@ function vehicleEdit(vehicleId) {
                 vehicle_modal.classList.add("active");
                 document.body.style.overflow = "hidden";
                 opened_vehicle = vehicleId;
-            }else if (data_parsed.error != null && data_parsed.error.code != null && data_parsed.error.message != null) {
+            } else if (data_parsed.error != null && data_parsed.error.code != null && data_parsed.error.message != null) {
                 Toast.error(`Ошибка сервера [${data_parsed.error.code}]: ${data_parsed.error.message}`);
-            }else{
+            } else {
                 Toast.error("Сервер не отвечает.");
             }
         });
-    }else{
+    } else {
         Toast.warning("Внимание: Обнаружено изменение данных. Перезагрузите страницу.");
     }
 }
 
-function vehicleDelete(vehicleId) {
+async function vehicleDelete(vehicleId) {
     if (confirm("Вы действительно хотите удалить автомобиль?")) {
         // Здесь будет логика удаления
         let tr_element = document.getElementById("tr_" + vehicleId);
         if (tr_element) {
             tr_element.remove();
         }
-        $.post("../../server/post/adminVehicleHandler.php", {"type": "deleteById", "vehicleId": vehicleId}, function (data){
+        const sessionId = getCookie('session_id');
+        const fingerprint = await collectFingerPrint();
+        $.post("../../server/post/adminVehicleHandler.php", {
+            "type": "deleteById",
+            "vehicleId": vehicleId,
+            "session_id": sessionId,
+            "fingerprint": fingerprint
+        }, function (data) {
             try {
                 var data_parsed = JSON.parse(data);
-                if (data_parsed.response != null && data_parsed.response.code != null && data_parsed.response.message != null){
+                if (data_parsed.response != null && data_parsed.response.code != null && data_parsed.response.message != null) {
                     Toast.success("Успешно удалено");
                     console.log(data_parsed.response.message);
-                }else if (data_parsed.error != null != null && data_parsed.error.code != null && data_parsed.error.message != null){
+                } else if (data_parsed.error != null != null && data_parsed.error.code != null && data_parsed.error.message != null) {
                     Toast.error(`Ошибка сервера [${data_parsed.error.code}]: ${data_parsed.error.message}`);
                 }
-            }catch(e) {
+            } catch (e) {
                 console.log("An error occurred in JSON.parse() : " + e.message);
             }
         });
@@ -318,7 +339,7 @@ function vehicleAdd() {
     }
 }
 
-function vehicleSave() {
+async function vehicleSave() {
     if (opened_vehicle != null) {
         let vehicle_modal = document.getElementById("vhc_modal");
         if (vehicle_modal) {
@@ -364,6 +385,10 @@ function vehicleSave() {
                         }
                     }
 
+                    const sessionId = getCookie('session_id');
+                    const fingerprint = await collectFingerPrint();
+                    formData.append("session_id", sessionId);
+                    formData.append("fingerprint", fingerprint);
                     // Отправляем через $.ajax
                     $.ajax({
                         url: "../../server/post/adminVehicleHandler.php",
@@ -371,7 +396,7 @@ function vehicleSave() {
                         data: formData,
                         processData: false,
                         contentType: false,
-                        success: function(data) {
+                        success: function (data) {
                             let data_parsed = JSON.parse(data);
                             if (data_parsed.response != null && data_parsed.response.code != null && data_parsed.response.message != null) {
                                 Toast.success("Данные сохранены!");
@@ -404,7 +429,7 @@ function vehicleSave() {
                                         let needleData = JSON.parse(data_parsed.response.message);
                                         if (needleData.image_path != null) {
                                             updateVehicleRow(opened_vehicle, vehicleData, needleData.image_path);
-                                        }else{
+                                        } else {
                                             updateVehicleRow(opened_vehicle, vehicleData);
                                         }
                                     }
@@ -419,7 +444,7 @@ function vehicleSave() {
                                 Toast.error("Ошибка. Не получен ответ от сервера.");
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             Toast.error(`Произошла ошибка: ${error}`);
                         }
                     });

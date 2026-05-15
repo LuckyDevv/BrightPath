@@ -1,1 +1,1 @@
-INSERT INTO `admin_sessions` (`session_hash`) VALUES (:session_hash);
+INSERT INTO `admin_sessions` (`session_hash`, `login`) VALUES (:session_hash, :login);

@@ -35,6 +35,10 @@ class ComposerStaticInita8a911115fdc661dcf163a5fce9be2fb
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
         ),
+        'P' =>
+        array (
+            'PHPMailer\\PHPMailer\\' => 20,
+        ),
         'E' =>
         array (
             'Egulias\\EmailValidator\\' => 23,
@@ -73,6 +77,10 @@ class ComposerStaticInita8a911115fdc661dcf163a5fce9be2fb
         'Symfony\\Polyfill\\Ctype\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
+        'PHPMailer\\PHPMailer\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Egulias\\EmailValidator\\' =>
         array (

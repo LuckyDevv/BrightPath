@@ -143,7 +143,7 @@ function renderGoods(goods) {
                 <div class="vehicle-price">${formattedPrice} ₽</div>
                 <div class="vehicle-actions">
                     <a href="goods_detail.php?id=${item.id}" class="btn-outline">Подробнее</a>
-                    <a href="#" class="btn">В корзину</a>
+                    <a class="btn" onclick="addToCart('goods', ${item.id})">В корзину</a>
                 </div>
             </div>
         `;

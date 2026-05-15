@@ -158,7 +158,7 @@ function renderVehicles(vehicles) {
                 <div class="vehicle-price">от ${formattedPrice} ₽ <small>за мероприятие</small></div>
                 <div class="vehicle-actions">
                     <a href="vehicle.php?id=${vehicle.id}" class="btn-outline">Подробнее</a>
-                    <a href="#" class="btn">Заказать</a>
+                    <a onclick="addToCart('transport', ${vehicle.id})" class="btn">Добавить</a>
                 </div>
             </div>
         `;

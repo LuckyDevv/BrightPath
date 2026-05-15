@@ -6,7 +6,8 @@
     "ext-pdo": "*",
     "ext-gd": "*",
     "ext-openssl": "*",
-    "chillerlan/php-qrcode": "dev-main"
+    "chillerlan/php-qrcode": "dev-main",
+    "phpmailer/phpmailer": "^6.9.2"
   },
   "autoload": {
     "psr-0": {

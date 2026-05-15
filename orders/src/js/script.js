@@ -64,38 +64,40 @@ function renderItems(items, containerId, categoryName) {
     items.forEach(item => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'order-item';
-        itemDiv.innerHTML = `
+        if (categoryName === "agentsItems") {
+            itemDiv.innerHTML = `
+            <span class="order-item-name">${escapeHtml(item)}</span>
+        `;
+        }else{
+            itemDiv.innerHTML = `
             <span class="order-item-name">${escapeHtml(item.name)} × ${item.quantity || 1}</span>
             <span class="order-item-price">${(item.price * (item.quantity || 1)).toLocaleString()} ₽</span>
         `;
+        }
         container.appendChild(itemDiv);
     });
 }
 
 function displayOrder(order) {
-    console.log(order);
     // Основная информация
     document.getElementById('resultOrderId').textContent = order.id;
     document.getElementById('orderDate').textContent = formatDate(order.created_at);
     document.getElementById('orderTotal').textContent = order.summary.toLocaleString() + ' ₽';
     document.getElementById('orderPhone').textContent = order.userphone;
     document.getElementById('orderEmailResult').textContent = order.useremail;
-
     // Статус
     const statusDiv = document.getElementById('orderStatus');
+    console.log(order.status);
     statusDiv.textContent = getStatusText(order.status);
     statusDiv.className = `order-status ${getStatusClass(order.status)}`;
-
     // Рендерим категории
     renderItems(order.transport, 'transportList', 'transportItems');
     renderItems(order.goods, 'goodsList', 'goodsItems');
     renderItems(order.services, 'servicesList', 'servicesItems');
     renderItems(order.agents, 'agentsList', 'agentsItems');
-
     // Показываем результат
     resultDiv.style.display = 'block';
     errorDiv.style.display = 'none';
-
     // Прокрутка к результату
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -134,31 +136,28 @@ trackForm.addEventListener('submit', async (e) => {
     errorDiv.style.display = 'none';
     loadingDiv.style.display = 'block';
 
-    try {
-        const response = await fetch('status.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                orderId: orderId,
-                email: orderEmail
-            })
-        });
-
-        const data = await response.json();
-        loadingDiv.style.display = 'none';
-
-        if (data.success && data.order) {
-            displayOrder(data.order);
-        } else {
+    $.post("../server/post/userOrdersHandler.php", {
+        "type": "checkStatus",
+        "orderId": orderId,
+        "email": orderEmail
+    }, function(data) {
+        let response;
+        try {
+            response = JSON.parse(data);
+        }catch(e) {
+            Toast.error("Ошибка подключения к серверу");
+            return;
+        }
+        if (response.response) {
+            console.log(response.response);
+            try {
+                displayOrder(response.response.data.order);
+            }catch(e){
+                Toast.error("Ошибка обработки данных!");
+            }
+        }else{
             errorDiv.style.display = 'block';
             resultDiv.style.display = 'none';
         }
-    } catch (error) {
-        loadingDiv.style.display = 'none';
-        errorDiv.style.display = 'block';
-        resultDiv.style.display = 'none';
-        Toast.error('Ошибка подключения к серверу');
-    }
+    });
 });

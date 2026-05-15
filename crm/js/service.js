@@ -31,8 +31,8 @@ function initServices() {
     console.log(srv_modal_elements);
 }
 
-function serviceView(serviceId) {
-    if (serviceId === undefined || serviceId === null){
+async function serviceView(serviceId) {
+    if (serviceId === undefined || serviceId === null) {
         Toast.warning("Внимание [1]: Обнаружено изменение данных. Перезагрузите страницу.");
         return;
     }
@@ -42,7 +42,14 @@ function serviceView(serviceId) {
     }
     let service_modal = document.getElementById("srv_modal");
     if (service_modal) {
-        $.post("../../server/post/adminServiceHandler.php", {"type": "getById", "serviceId": serviceId}, function (data) {
+        const sessionId = getCookie('session_id');
+        const fingerprint = await collectFingerPrint();
+        $.post("../../server/post/adminServiceHandler.php", {
+            "type": "getById",
+            "serviceId": serviceId,
+            "session_id": sessionId,
+            "fingerprint": fingerprint
+        }, function (data) {
             var data_parsed = JSON.parse(data);
             if (data_parsed.response != null) {
                 let serviceData = JSON.parse(data_parsed.response.message);
@@ -53,17 +60,17 @@ function serviceView(serviceId) {
                 service_modal.classList.add("active");
                 document.body.style.overflow = "hidden";
                 opened_service = serviceId;
-            }else if (data_parsed.error != null && data_parsed.error.code != null && data_parsed.error.message != null) {
+            } else if (data_parsed.error != null && data_parsed.error.code != null && data_parsed.error.message != null) {
                 Toast.error(`Ошибка сервера [${data_parsed.error.code}]: ${data_parsed.error.message}`);
             }
         });
-    }else{
+    } else {
         Toast.warning("Внимание [3]: Обнаружено изменение данных. Перезагрузите страницу.");
     }
 }
 
-function serviceEdit(serviceId) {
-    if (serviceId === undefined || serviceId === null){
+async function serviceEdit(serviceId) {
+    if (serviceId === undefined || serviceId === null) {
         Toast.warning("Внимание [1]: Обнаружено изменение данных. Перезагрузите страницу.");
         return;
     }
@@ -73,7 +80,14 @@ function serviceEdit(serviceId) {
     }
     let service_modal = document.getElementById("srv_modal");
     if (service_modal) {
-        $.post("../../server/post/adminServiceHandler.php", {"type": "getById", "serviceId": serviceId}, function (data) {
+        const sessionId = getCookie('session_id');
+        const fingerprint = await collectFingerPrint();
+        $.post("../../server/post/adminServiceHandler.php", {
+            "type": "getById",
+            "serviceId": serviceId,
+            "session_id": sessionId,
+            "fingerprint": fingerprint
+        }, function (data) {
             var data_parsed = JSON.parse(data);
             if (data_parsed.response != null) {
                 let serviceData = JSON.parse(data_parsed.response.message);
@@ -84,33 +98,40 @@ function serviceEdit(serviceId) {
                 service_modal.classList.add("active");
                 document.body.style.overflow = "hidden";
                 opened_service = serviceId;
-            }else if (data_parsed.error != null && data_parsed.error.code != null && data_parsed.error.message != null) {
+            } else if (data_parsed.error != null && data_parsed.error.code != null && data_parsed.error.message != null) {
                 Toast.error(`Ошибка сервера [${data_parsed.error.code}]: ${data_parsed.error.message}`);
-            }else{
+            } else {
                 Toast.error("Сервер не отвечает.");
             }
         });
-    }else{
+    } else {
         Toast.warning("Внимание: Обнаружено изменение данных. Перезагрузите страницу.");
     }
 }
 
-function serviceDelete(serviceId) {
+async function serviceDelete(serviceId) {
     if (confirm("Вы действительно хотите удалить услугу?")) {
         let tr_element = document.getElementById("tr_" + serviceId);
         if (tr_element) {
             tr_element.remove();
         }
-        $.post("../../server/post/adminServiceHandler.php", {"type": "deleteById", "serviceId": serviceId}, function (data){
+        const sessionId = getCookie('session_id');
+        const fingerprint = await collectFingerPrint();
+        $.post("../../server/post/adminServiceHandler.php", {
+            "type": "deleteById",
+            "serviceId": serviceId,
+            "session_id": sessionId,
+            "fingerprint": fingerprint
+        }, function (data) {
             try {
                 var data_parsed = JSON.parse(data);
-                if (data_parsed.response != null && data_parsed.response.code != null && data_parsed.response.message != null){
+                if (data_parsed.response != null && data_parsed.response.code != null && data_parsed.response.message != null) {
                     Toast.success("Успешно удалено");
                     console.log(data_parsed.response.message);
-                }else if (data_parsed.error != null != null && data_parsed.error.code != null && data_parsed.error.message != null){
+                } else if (data_parsed.error != null != null && data_parsed.error.code != null && data_parsed.error.message != null) {
                     Toast.error(`Ошибка сервера [${data_parsed.error.code}]: ${data_parsed.error.message}`);
                 }
-            }catch(e) {
+            } catch (e) {
                 console.log("An error occurred in JSON.parse() : " + e.message);
             }
         });
@@ -131,7 +152,7 @@ function serviceAdd() {
     }
 }
 
-function serviceSave() {
+async function serviceSave() {
     if (opened_service !== null) {
         let service_modal = document.getElementById("srv_modal");
         if (service_modal) {
@@ -163,13 +184,17 @@ function serviceSave() {
 
                     formData.append("serviceData", JSON.stringify(serviceData));
 
+                    const sessionId = getCookie('session_id');
+                    const fingerprint = await collectFingerPrint();
+                    formData.append("session_id", sessionId);
+                    formData.append("fingerprint", fingerprint);
                     $.ajax({
                         url: "../../server/post/adminServiceHandler.php",
                         type: "POST",
                         data: formData,
                         processData: false,
                         contentType: false,
-                        success: function(data) {
+                        success: function (data) {
                             let data_parsed = JSON.parse(data);
                             if (data_parsed.response != null && data_parsed.response.code != null && data_parsed.response.message != null) {
                                 Toast.success("Данные сохранены!");
@@ -203,7 +228,7 @@ function serviceSave() {
                                 Toast.error("Ошибка. Не получен ответ от сервера.");
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             Toast.error(`Произошла ошибка: ${error}`);
                         }
                     });

@@ -76,6 +76,24 @@ class AdminsManager extends Manager
         }
     }
 
+    public function checkAdminPassword(string $login, string $password): bool
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `password_hash` FROM `admin_users` WHERE `login` = :login");
+            if ($stmt->execute([':login' => $login])) {
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (isset($result['password_hash'])) {
+                    if (password_verify($password, $result['password_hash'])) {
+                        return true;
+                    }
+                }
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
+    }
+
     public function getRole(string $login): ?string
     {
         try {
@@ -232,11 +250,87 @@ class AdminsManager extends Manager
         return false;
     }
 
+    public function changePasswordByLogin(mixed $admin_login, string $newPassword): bool
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE `admin_users` SET `password_hash` = :new_password, `password_updated_at` = :password_updated_at WHERE `login` = :login;");
+            $stmt->bindValue(':login', $admin_login, PDO::PARAM_STR);
+            $stmt->bindValue(':new_password', password_hash($newPassword, PASSWORD_DEFAULT), PDO::PARAM_STR);
+            $stmt->bindValue(':password_updated_at', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            if ($stmt->execute()) {
+                return true;
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
+    }
+
     public function removeAccount(int $adminId): bool
     {
         try {
             $stmt = $this->db->prepare(AdminsExecutor::REMOVE_ACCOUNT());
             $stmt->bindParam(':id', $adminId, PDO::PARAM_INT);
+            return $stmt->execute();
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
+    }
+
+    public function exists(string $login): bool
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `id` FROM `admin_users` WHERE `login` = :login");
+            $stmt->bindParam(':login', $login, PDO::PARAM_STR);
+            if ($stmt->execute()) {
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (is_array($result) && isset($result['id'])) {
+                    return true;
+                }
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
+    }
+
+    public function updateAdmin(int $adminId, string $login, string $role, bool $is_locked): bool
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE `admin_users` SET `login`=:login, `role`=:role, `is_locked`=:is_locked WHERE `id`=:id");
+            $stmt->bindParam(':login', $login, PDO::PARAM_STR);
+            $stmt->bindParam(':role', $role, PDO::PARAM_STR);
+            $stmt->bindParam(':is_locked', $is_locked, PDO::PARAM_BOOL);
+            $stmt->bindParam(':id', $adminId, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return true;
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
+    }
+
+    public function getAccountInfo(mixed $admin_login): array|false
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `role`,`is_locked`,`last_login_at`,`password_updated_at` FROM `admin_users` WHERE `login` = :login");
+            $stmt->bindParam(':login', $admin_login, PDO::PARAM_STR);
+            if ($stmt->execute()) {
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("AdminsManager", $e);
+        }
+        return false;
+    }
+
+    public function resetTotpByLogin(mixed $admin_login): bool
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE `admin_users` SET `totp_secret` = NULL, `is_2fa_enabled`=0 WHERE `login` = :admin_login;");
+            $stmt->bindParam(':admin_login', $admin_login, PDO::PARAM_STR);
             return $stmt->execute();
         }catch (PDOException|Exception|Error $e) {
             $this->createLog("AdminsManager", $e);

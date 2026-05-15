@@ -1,3 +1,18 @@
+<?php
+require __DIR__ . '/vendor/autoload.php';
+use managers\PresetsManager;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
+$presetsManager = new PresetsManager();
+
+$loader = new FilesystemLoader('server/twig');
+$twig = new Environment($loader, [
+    //'cache' => '../server/twig/cache',
+        'autoescape' => false,
+]);
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -18,6 +33,7 @@
     <link rel="stylesheet" href="src/css/contacts.css">
     <link rel="stylesheet" href="src/css/experience.css">
     <link rel="stylesheet" href="src/css/modal.css">
+    <link rel="stylesheet" href="src/css/toasts.css">
     <link rel="icon" href="logo.png" type="image/png">
 </head>
 <body>
@@ -36,11 +52,11 @@
         <nav class="nav" id="nav">
             <a href="#" class="active">Главная</a>
             <a href="goods">Товары</a>
-            <a href="service/">Услуги</a>
+            <a href="services/">Услуги</a>
             <a href="agents">Агенты</a>
             <a href="calculator">Калькулятор</a>
             <a href="autopark">Автопарк</a>
-            <a href="profile">Профиль</a>
+            <a href="orders">Заказы</a>
             <a onclick="openModal()" class="btn-light" id="contactBtn">Связаться</a>
         </nav>
     </div>
@@ -287,239 +303,30 @@
         <div class="subtitle">Выберите подходящий пакет</div>
         <div class="tariffs">
             <!-- Эконом - базовый -->
-            <div class="tariff-card">
-                <div class="tariff-name">Эконом</div>
-                <div class="tariff-price">от 18 900 ₽</div>
-                <div class="tariff-description">Достойно и доступно</div>
-                <div class="tariff-divider"></div>
-                <div class="tariff-features-wrapper">
-                    <div class="tariff-features collapsed" id="features-1">
-                        <div class="tariff-features-inner">
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Гроб</strong> (сосна, обит тканью)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Катафалк</strong> (ГАЗель, 1 час)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Автобус для гостей</strong> (микроавтобус)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Копка могилы</strong> (ручная)</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="cross-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                                <span><strong>Венки и цветы</strong></span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="cross-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                                <span><strong>Поминальный обед</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tariff-actions">
-                    <button class="btn-more" onclick="toggleFeatures('features-1', this)">Подробнее</button>
-                    <a href="#" class="btn">Связаться</a>
-                </div>
-            </div>
-
-            <!-- Стандарт - оптимальный -->
-            <div class="tariff-card popular">
-                <div class="popular-badge">ВЫБОР 80% КЛИЕНТОВ</div>
-                <div class="tariff-name">Стандарт</div>
-                <div class="tariff-price">от 39 900 ₽</div>
-                <div class="tariff-description">Оптимальный выбор</div>
-                <div class="tariff-divider"></div>
-                <div class="tariff-features-wrapper">
-                    <div class="tariff-features collapsed" id="features-2">
-                        <div class="tariff-features-inner">
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Гроб</strong> (дуб, полировка, крест)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Катафалк</strong> (Mersedes-Benz Vito, 2 часа)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Автобус для гостей</strong> (2 микроавтобуса)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Копка могилы</strong> (механизированная)</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Венки и цветы</strong> (2 венка + корзина)</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="cross-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                                <span><strong>Поминальный обед</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tariff-actions">
-                    <button class="btn-more" onclick="toggleFeatures('features-2', this)">Подробнее</button>
-                    <a href="#" class="btn">Связаться</a>
-                </div>
-            </div>
-
-            <!-- Премиум - расширенный -->
-            <div class="tariff-card">
-                <div class="tariff-name">Премиум</div>
-                <div class="tariff-price">от 69 900 ₽</div>
-                <div class="tariff-description">Всё включено</div>
-                <div class="tariff-divider"></div>
-                <div class="tariff-features-wrapper">
-                    <div class="tariff-features collapsed" id="features-3">
-                        <div class="tariff-features-inner">
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Гроб</strong> (красное дерево, инкрустация)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Катафалк</strong> (Lincoln, Cadillac, весь день)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Автобусы для гостей</strong> (3 автобуса)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Копка могилы</strong> + уход за участком</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Венки и цветы</strong> (5 венков, 3 корзины)</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Поминальный обед</strong> (кафе, 30 чел)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tariff-actions">
-                    <button class="btn-more" onclick="toggleFeatures('features-3', this)">Подробнее</button>
-                    <a href="#" class="btn">Связаться</a>
-                </div>
-            </div>
-
-            <!-- VIP - элитный -->
-            <div class="tariff-card vip">
-                <div class="vip-badge">VIP</div>
-                <div class="tariff-name">Император</div>
-                <div class="tariff-price">от 129 900 ₽</div>
-                <div class="tariff-description">Высший уровень</div>
-                <div class="tariff-divider"></div>
-                <div class="tariff-features-wrapper">
-                    <div class="tariff-features collapsed" id="features-4">
-                        <div class="tariff-features-inner">
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Гроб</strong> (Махагон, ручная работа, бархат)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Катафалк</strong> (Hummer, Lincoln, весь день)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Автобусы для гостей</strong> (5 автобусов)</span>
-                            </div>
-                            <div class="tariff-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Место на кладбище</strong> (престижный участок)</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Оркестр</strong> (духовой, 10 человек)</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Поминальный обед</strong> (ресторан, 50 чел)</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Видеосъемка</strong> + фотограф</span>
-                            </div>
-                            <div class="tariff-feature hidden-feature">
-                                <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span><strong>Памятник</strong> (мрамор, база)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tariff-actions">
-                    <button class="btn-more" onclick="toggleFeatures('features-4', this)">Подробнее</button>
-                    <a href="#" class="btn btn-vip">Связаться</a>
-                </div>
-            </div>
-
-            <!-- Конструктор - индивидуальный -->
+            <?php
+            $presets = $presetsManager->getAllPresets();
+            foreach ($presets as $preset) {
+                try {
+                    $transport = json_decode($preset["transport"]);
+                    $goods = json_decode($preset["goods"]);
+                    $services = json_decode($preset["services"]);
+                    $features = [];
+                    foreach ($transport as $item) {
+                        $features[] = $item;
+                    }
+                    foreach ($goods as $item) {
+                        $features[] = $item;
+                    }
+                    foreach ($services as $item) {
+                        $features[] = $item;
+                    }
+                    $preset['features'] = $features;
+                    echo $twig->render('preset.twig', ["preset" => $preset]);
+                }catch (\Exception|\Error $e){
+                    echo $e->getMessage();
+                }
+            }
+            ?>
             <div class="tariff-card constructor">
                 <div class="constructor-badge">СВОЙ ПАКЕТ</div>
                 <div class="tariff-name">Конструктор</div>
@@ -576,7 +383,7 @@
                 </div>
                 <div class="tariff-actions">
                     <button class="btn-more" onclick="toggleFeatures('features-5', this)">Подробнее</button>
-                    <a href="#" class="btn btn-constructor" style="width: 100%;">Собрать</a>
+                    <a href="calculator/index.php?preset=custom" class="btn btn-constructor" style="width: 100%;">Собрать</a>
                 </div>
             </div>
         </div>
@@ -750,171 +557,15 @@
     </div>
 </section>
 
-<!-- Контакты -->
-<section id="contacts" class="contacts-black">
-    <div class="container">
-        <div class="contacts-grid">
-            <div class="contacts-info">
-                <h2>Контакты</h2>
-                <div class="contacts-details">
-                    <p>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" stroke-width="1.5"/>
-                            <line x1="12" y1="18" x2="12" y2="18" stroke-width="1.5"/>
-                        </svg>
-                        +7 (987) 654-32-10
-                    </p>
-                    <p>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2" stroke-width="1.5"/>
-                            <polyline points="22,6 12,13 2,6" stroke-width="1.5"/>
-                        </svg>
-                        info@svetlyput.ru
-                    </p>
-                    <p>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <circle cx="12" cy="10" r="3" stroke-width="1.5"/>
-                            <path d="M12 2a8 8 0 0 0-8 8c0 4 8 12 8 12s8-8 8-12a8 8 0 0 0-8-8z" stroke-width="1.5"/>
-                        </svg>
-                        г. Одинцово, ул. Глазынинская, д 18
-                    </p>
-                    <p>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
-                            <polyline points="12 6 12 12 16 14" stroke-width="1.5"/>
-                        </svg>
-                        Круглосуточно, без выходных
-                    </p>
-                </div>
-            </div>
-            <div class="contacts-map">
-                <iframe src="https://yandex.ru/map-widget/v1/?ll=37.277778%2C55.678889&z=16&pt=37.277778%2C55.678889%2Cpm2dvl&mode=search&text=Одинцово%2C%20улица%20Глазынинская%2C%2018" width="100%" height="300" frameborder="0" allowfullscreen="true"></iframe>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- Футер -->
-<footer class="footer">
-    <div class="container">
-        <div class="footer-col">
-            <img src="logo.png" alt="Светлый Путь" style="height: 40px; margin-bottom: 15px;">
-            <h4>Светлый Путь</h4>
-            <p>Ритуальное агентство в Одинцово. Работаем с 2002 года.</p>
-        </div>
-        <div class="footer-col">
-            <h4>Разделы</h4>
-            <ul>
-                <li><a href="goods/">Товары</a></li>
-                <li><a href="services/">Услуги</a></li>
-                <li><a href="agents/">Агенты</a></li>
-                <li><a href="calculator/">Калькулятор</a></li>
-                <li><a href="autopark/">Автопарк</a></li>
-                <li><a href="profile/">Профиль</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>Информация</h4>
-            <ul>
-                <li><a href="politics">Правовая информация</a></li>
-                <li><a href="politics/privacy/">Политика конфиденциальности</a></li>
-                <li><a href="politics/treatment/">Политика обработки данных</a></li>
-                <li><a href="politics/terms/">Пользовательское соглашение</a></li>
-                <li><a href="politics/cookies/">Политика cookie</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>Контакты</h4>
-            <p>+7 (987) 654-32-10<br>info@svetlyput.ru<br>Одинцово, ул. Глазынинская, 18</p>
-        </div>
-        <div class="footer-col">
-            <h4>Соцсети</h4>
-            <div class="social-links">
-                <a href="https://t.me/luckydevv" aria-label="Telegram">
-                    <svg width="800px" height="800px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#000000" class="bi bi-telegram">
-                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"/>
-                    </svg>
-                </a>
-                <a href="#" aria-label="MAX">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" fill="#000000">
-                        <path d="M350.4,9.6C141.8,20.5,4.1,184.1,12.8,390.4c3.8,90.3,40.1,168,48.7,253.7,2.2,22.2-4.2,49.6,21.4,59.3,31.5,11.9,79.8-8.1,106.2-26.4,9-6.1,17.6-13.2,24.2-22,27.3,18.1,53.2,35.6,85.7,43.4,143.1,34.3,299.9-44.2,369.6-170.3C799.6,291.2,622.5-4.6,350.4,9.6h0ZM269.4,504c-11.3,8.8-22.2,20.8-34.7,27.7-18.1,9.7-23.7-.4-30.5-16.4-21.4-50.9-24-137.6-11.5-190.9,16.8-72.5,72.9-136.3,150-143.1,78-6.9,150.4,32.7,183.1,104.2,72.4,159.1-112.9,316.2-256.4,218.6h0Z"/>
-                    </svg>
-                </a>
-                <a href="https://vk.com/luckydevv" aria-label="VK">
-                    <svg fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
-                        <path d="M15.07294,2H8.9375C3.33331,2,2,3.33331,2,8.92706V15.0625C2,20.66663,3.32294,22,8.92706,22H15.0625C20.66669,22,22,20.67706,22,15.07288V8.9375C22,3.33331,20.67706,2,15.07294,2Zm3.07287,14.27081H16.6875c-.55206,0-.71875-.44793-1.70831-1.4375-.86463-.83331-1.22919-.9375-1.44794-.9375-.30206,0-.38544.08332-.38544.5v1.3125c0,.35419-.11456.5625-1.04162.5625a5.69214,5.69214,0,0,1-4.44794-2.66668A11.62611,11.62611,0,0,1,5.35419,8.77081c0-.21875.08331-.41668.5-.41668H7.3125c.375,0,.51044.16668.65625.55212.70831,2.08331,1.91669,3.89581,2.40625,3.89581.1875,0,.27081-.08331.27081-.55206V10.10413c-.0625-.97913-.58331-1.0625-.58331-1.41663a.36008.36008,0,0,1,.375-.33337h2.29169c.3125,0,.41662.15625.41662.53125v2.89587c0,.3125.13544.41663.22919.41663.1875,0,.33331-.10413.67706-.44788a11.99877,11.99877,0,0,0,1.79169-2.97919.62818.62818,0,0,1,.63544-.41668H17.9375c.4375,0,.53125.21875.4375.53125A18.20507,18.20507,0,0,1,16.41669,12.25c-.15625.23956-.21875.36456,0,.64581.14581.21875.65625.64582,1,1.05207a6.48553,6.48553,0,0,1,1.22912,1.70837C18.77081,16.0625,18.5625,16.27081,18.14581,16.27081Z"/>
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="footer-bottom">
-            © 2026 Ритуальное агентство «Светлый Путь». Курсовой проект по разработке информационных систем.
-        </div>
-    </div>
-</footer>
-<!-- Модальное окно "Связаться" -->
-<div class="modal-overlay" id="modalOverlay">
-    <div class="modal-container">
-        <button class="modal-close" id="modalClose">&times;</button>
-        <div class="modal-content">
-            <h2>Связаться с нами</h2>
-            <p class="modal-subtitle">Оставьте свои контакты, и мы свяжемся с вами в ближайшее время</p>
+<?php
+$config = new \lib\Config()->getConfig();
+echo $twig->render("main_contacts.twig", ['config' => $config]);
+echo $twig->render("page_end.twig", ["basePath" => "", "config" => $config]);
+?>
 
-            <form class="modal-form" id="contactForm">
-                <div class="form-group">
-                    <label for="modalName">Ваше имя</label>
-                    <input type="text" id="modalName" placeholder="Введите ваше имя">
-                </div>
-
-                <div class="form-group">
-                    <label for="modalPhone">Номер телефона <span class="required">*</span></label>
-                    <input type="tel" id="modalPhone" placeholder="+7 (___) ___-__-__" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="modalEmail">Электронная почта</label>
-                    <input type="email" id="modalEmail" placeholder="example@mail.ru">
-                </div>
-
-                <div class="form-agreement">
-                    <input type="checkbox" id="modalAgreement" checked>
-                    <label for="modalAgreement">Согласен на обработку персональных данных</label>
-                </div>
-
-                <button type="submit" class="modal-submit-btn" id="modalSubmitBtn">Отправить</button>
-            </form>
-
-            <div class="modal-contacts">
-                <h3>Или свяжитесь напрямую:</h3>
-                <div class="modal-contact-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                        <line x1="12" y1="18" x2="12" y2="18" stroke="currentColor" stroke-width="1.5"/>
-                    </svg>
-                    <a href="tel:+79876543210">+7 (987) 654-32-10</a>
-                </div>
-                <div class="modal-contact-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                        <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="1.5"/>
-                    </svg>
-                    <a href="mailto:info@svetlyput.ru">info@svetlyput.ru</a>
-                </div>
-            </div>
-
-            <div class="modal-success" id="modalSuccess">
-                <svg viewBox="0 0 24 24" width="48" height="48">
-                    <circle cx="12" cy="12" r="10" fill="#d4a373"/>
-                    <polyline points="8 12 11 15 16 9" stroke="white" stroke-width="2" fill="none"/>
-                </svg>
-                <h3>Спасибо!</h3>
-                <p>Мы свяжемся с вами в ближайшее время.</p>
-            </div>
-        </div>
-    </div>
-</div>
-<script src="src/js/index.js"></script>
+<script src="src/js/jquery.min.js"></script>
+<script src="src/js/toasts.js"></script>
 <script src="src/js/modal.js"></script>
+<script src="src/js/index.js"></script>
 </body>
 </html>

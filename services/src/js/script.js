@@ -116,7 +116,7 @@ function renderServices(services) {
                 <div class="service-price">от ${formattedPrice} ₽ <small>за услугу</small></div>
                 <div class="service-actions">
                     <a href="service.php?id=${service.id}" class="btn-outline">Подробнее</a>
-                    <a href="#" class="btn">Заказать</a>
+                    <a class="btn" onclick="addToCart('services', ${service.id})">Заказать</a>
                 </div>
             </div>
         `;

@@ -39,7 +39,8 @@ $data = [
         'seats' => $vehicle['seats'],
         'description_full' => $vehicle['description_full']
     ],
-    'similar_vehicles' => getSimilarVehicles($vehiclesManager, $vehicle['id'], $vehicle['category']) // функция для похожих авто
+    'similar_vehicles' => getSimilarVehicles($vehiclesManager, $vehicle['id'], $vehicle['category']), // функция для похожих авто
+    'page_end' => $twig->render("page_end.twig", ["basePath" => "../", "config" => new \lib\Config()->getConfig()]),
 ];
 
 // Рендерим шаблон

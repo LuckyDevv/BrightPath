@@ -187,4 +187,71 @@ class VehiclesManager extends Manager
         }
         return [];
     }
+
+    public function getVehicleByIdForCart(int $vehicleId): array
+    {
+        try {
+            $stmt = $this->db->prepare(VehiclesExecutor::GET_VEHICLE_BY_ID_FOR_CART());
+            $stmt->bindValue(':id', $vehicleId);
+            if ($stmt->execute()) {
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+        }
+        return [];
+    }
+
+    public function getForPreset(array $ids): array
+    {
+        try {
+            $placeholders = [];
+            foreach ($ids as $key => $id) {
+                $placeholders[] = ":id{$key}";
+            }
+            $placeholders_str = implode(',', $placeholders);
+
+            $sql = "SELECT `id`,`name`,`price`,1 as `quantity` FROM `vehicles` WHERE `id` IN ({$placeholders_str})";
+
+            $stmt = $this->db->prepare($sql);
+
+            // Привязываем значения
+            foreach ($ids as $key => $id) {
+                $stmt->bindValue(":id{$key}", $id, PDO::PARAM_INT);
+            }
+            if ($stmt->execute()) {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+        }
+        return [];
+    }
+
+    public function getAllForSelect(): array
+    {
+        try {
+            $stmt = $this->db->query("SELECT `id`, `name`, `price` FROM `vehicles` WHERE `is_active` = 1");
+            if ($stmt->execute()) {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+        }
+        return [];
+    }
+
+    public function order(int $id, int $quantity): bool
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE `vehicles` SET `reserved_stock` = `reserved_stock` + :quantity, `orders_count` = `orders_count` + :quantity WHERE `id` = :id;");
+            $stmt->bindValue(":quantity", $quantity, PDO::PARAM_INT);
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("VehiclesManager", $e);
+        }
+        return false;
+    }
+
 }

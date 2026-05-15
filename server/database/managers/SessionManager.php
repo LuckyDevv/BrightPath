@@ -21,17 +21,17 @@ class SessionManager extends Manager {
 
     public function __construct()
     {
-        parent::__construct(SessionExecutor::CREATE_TABLE());
+        parent::__construct(SessionExecutor::CREATE_TABLE(), true);
     }
 
-    public function verifySession(int $session_id, string $master_key, string $login_ip, bool $is_login=true): int
+    public function verifySession(int $session_id, string $master_key, string $login_ip, bool $is_login=true): int|array
     {
         try {
             $stmt = $this->db->prepare(SessionExecutor::VERIFY_SESSION());
             $stmt->execute([":session_id" => $session_id]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $stmt->closeCursor();
-            if (is_array($row) && count($row) > 0) {
+            if (is_array($row) && !empty($row)) {
                 $encryptedData = $row["session_hash"];
                 $decryptedData = $this->decodeSession($encryptedData, $master_key);
                 if (is_array($decryptedData)) {
@@ -47,7 +47,7 @@ class SessionManager extends Manager {
                                         $current_date = date("Y-m-d H:i:s");
                                         $adminsManager->updateLastData($admin_login, $login_ip, $current_date);
                                     }
-                                    return self::SESSION_SUCCESS;
+                                    return $decryptedData;
                                 }else $err_code = self::SESSION_PASSWORD_UPDATED;
                             }else $err_code = self::SESSION_PASSWORD_UPDATE_INVALID;
                         }else $err_code = self::SESSION_USER_BLOCKED;
@@ -96,6 +96,7 @@ class SessionManager extends Manager {
             );
             $encryptedData = base64_encode($iv . $encrypted . $tag);
             $stmt->bindParam(":session_hash", $encryptedData);
+            $stmt->bindParam(":login", $admin_login);
             if ($stmt->execute()) {
                 return $this->db->lastInsertId();
             }
@@ -131,5 +132,48 @@ class SessionManager extends Manager {
             "session_created_at" => $session_created_at,
             "session_expires_at" => $session_expires_at,
         ];
+    }
+
+    public function getLoginById(int $id): string|false
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `login` FROM `admin_sessions` WHERE `id` = :id");
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return $stmt->fetch(PDO::FETCH_ASSOC)['login'];
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("SessionManager", $e);
+        }
+        return false;
+    }
+
+    public function getSessionCount(mixed $admin_login): int|false
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(`id`) FROM `admin_sessions` WHERE `login` = :admin_login;");
+            $stmt->bindValue(":admin_login", $admin_login, PDO::PARAM_STR);
+            if ($stmt->execute()) {
+                return $stmt->fetchColumn();
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("SessionManager", $e);
+        }
+        return false;
+    }
+
+    public function removeAllSessions(mixed $admin_login, int $session_id): bool
+    {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM `admin_sessions` WHERE `login` = :admin_login AND `id` != :session_id;");
+            $stmt->bindValue(":admin_login", $admin_login, PDO::PARAM_STR);
+            $stmt->bindValue(":session_id", $session_id, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return true;
+            }
+        }catch (PDOException|Exception|Error $e) {
+            $this->createLog("SessionManager", $e);
+        }
+        return false;
     }
 }

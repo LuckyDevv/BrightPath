@@ -12,5 +12,8 @@ CREATE TABLE IF NOT EXISTS `admin_users` (
     `last_login_ip` VARCHAR(45) NULL COMMENT 'IP адрес последнего входа',
     INDEX idx_login (`login`),
     INDEX idx_role (`role`),
-    INDEX idx_is_locked (`is_locked`)
+    INDEX idx_is_locked (`is_locked`),
+    INDEX idx_login_locked_2fa (`login`, `is_locked`, `is_2fa_enabled`),
+    INDEX idx_login_pwd_update (`login`, `password_updated_at`),
+    INDEX idx_login_last_login (`login`, `last_login_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Таблица администраторов';

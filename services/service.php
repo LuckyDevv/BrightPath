@@ -45,7 +45,8 @@ $data = [
             'category_name' => getCategoryName($service['category']), // функция для определения типа
             'price' => $service['price'],
             'what_includes' => $what_includes
-        ]
+        ],
+        'page_end' => $twig->render("page_end.twig", ["basePath" => "../", "config" => new \lib\Config()->getConfig()]),
         //'similar_vehicles' => getSimilarVehicles($vehiclesManager, $vehicle['id'], $vehicle['category']) // функция для похожих авто
 ];
 

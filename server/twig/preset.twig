@@ -1,0 +1,46 @@
+{% if preset.decoration == 'popular' %}
+<div class="tariff-card popular">
+    {% if preset.decoration_quote != '' %}
+        <div class="popular-badge">{{ preset.decoration_quote }}</div>
+    {% endif %}
+{% endif %}
+{% if preset.decoration == 'default' %}
+<div class="tariff-card">
+{% endif %}
+{% if preset.decoration == 'vip' %}
+<div class="tariff-card vip">
+    {% if preset.decoration_quote != '' %}
+        <div class="vip-badge">{{ preset.decoration_quote }}</div>
+    {% endif %}
+{% endif %}
+{% if preset.decoration == 'primary' %}
+<div class="tariff-card constructor">
+    {% if preset.decoration_quote != '' %}
+        <div class="constructor-badge">{{ preset.decoration_quote }}</div>
+    {% endif %}
+{% endif %}
+    <div class="tariff-name">{{ preset.name }}</div>
+    <div class="tariff-price">от {{ preset.price }} ₽</div>
+    <div class="tariff-description">{{ preset.quote }}</div>
+    <div class="tariff-divider"></div>
+    <div class="tariff-features-wrapper">
+        <div class="tariff-features collapsed" id="features-{{ preset.id }}">
+            <div class="tariff-features-inner">
+                {% if preset.features is not empty %}
+                {% for feature in preset.features %}
+                    <div class="tariff-feature">
+                        <svg class="check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>{{ feature.name }}</span>
+                    </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="tariff-actions">
+        <button class="btn-more" onclick="toggleFeatures('features-{{ preset.id }}', this)">Подробнее</button>
+        <a href="calculator/index.php?preset={{ preset.id }}" class="btn">Купить</a>
+    </div>
+</div>

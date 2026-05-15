@@ -218,7 +218,7 @@ function agentClose() {
 }
 
 // ===== ОТКРЫТИЕ ПРОСМОТРА =====
-function agentView(agentId) {
+async function agentView(agentId) {
     if (!agentId || !Number.isInteger(agentId)) {
         console.log("Неверный ID агента");
         return;
@@ -226,8 +226,9 @@ function agentView(agentId) {
 
     const agent_modal = document.getElementById("agt_modal");
     if (!agent_modal) return;
-
-    $.post("../../server/post/adminAgentHandler.php", {"type": "getById", "agentId": agentId}, function(data) {
+    const sessionId = getCookie('session_id');
+    const fingerprint = await collectFingerPrint();
+    $.post("../../server/post/adminAgentHandler.php", {"type": "getById", "agentId": agentId, "session_id": sessionId, "fingerprint": fingerprint}, function (data) {
         const data_parsed = JSON.parse(data);
         if (data_parsed.response?.message) {
             const agentData = JSON.parse(data_parsed.response.message);
@@ -239,12 +240,14 @@ function agentView(agentId) {
             agent_modal.classList.add("active");
             document.body.style.overflow = "hidden";
             opened_agent = agentId;
+        } else {
+            Toast.error(`Ошибка [${data_parsed.error.code}]: ${data_parsed.error.message}`);
         }
     });
 }
 
 // ===== ОТКРЫТИЕ РЕДАКТИРОВАНИЯ =====
-function agentEdit(agentId) {
+async function agentEdit(agentId) {
     if (!agentId || !Number.isInteger(agentId)) {
         console.log("Неверный ID агента");
         return;
@@ -253,7 +256,14 @@ function agentEdit(agentId) {
     const agent_modal = document.getElementById("agt_modal");
     if (!agent_modal) return;
 
-    $.post("../../server/post/adminAgentHandler.php", {"type": "getById", "agentId": agentId}, function(data) {
+    const sessionId = getCookie('session_id');
+    const fingerprint = await collectFingerPrint();
+    $.post("../../server/post/adminAgentHandler.php", {
+        "type": "getById",
+        "agentId": agentId,
+        "session_id": sessionId,
+        "fingerprint": fingerprint
+    }, function (data) {
         const data_parsed = JSON.parse(data);
         if (data_parsed.response?.message) {
             const agentData = JSON.parse(data_parsed.response.message);
@@ -283,7 +293,7 @@ function agentAdd() {
 }
 
 // ===== СОХРАНЕНИЕ АГЕНТА =====
-function agentSave() {
+async function agentSave() {
     if (!opened_agent && agt_modal_type !== 1) {
         Toast.warning("Произошла ошибка. Перезагрузите страницу.");
         return;
@@ -333,18 +343,24 @@ function agentSave() {
         formData.append("existing_main_photo", photosData.existing_main_photo);
     }
 
+    const sessionId = getCookie('session_id');
+    const fingerprint = await collectFingerPrint();
+    formData.append("session_id", sessionId);
+    formData.append("fingerprint", fingerprint);
     $.ajax({
         url: "../../server/post/adminAgentHandler.php",
         type: "POST",
         data: formData,
         processData: false,
         contentType: false,
-        success: function(data) {
+        success: async function (data) {
             const data_parsed = JSON.parse(data);
             if (data_parsed.response?.code === 200) {
                 Toast.success("Данные сохранены!");
 
-                let agentId; let action; let image_path;
+                let agentId;
+                let action;
+                let image_path;
                 if (agt_modal_type === 1) {
                     action = 0;
                     let response_data = JSON.parse(data_parsed.response.message);
@@ -356,10 +372,15 @@ function agentSave() {
                     agentId = agentData.agentId;
                     action = 1;
                 }
-                console.log("Agent id: "+agentId);
-                console.log("Action: "+action);
-                console.log("Image path: "+image_path || "Null");
-                $.post("../../server/post/adminAgentHandler.php", {"type": "getById", "agentId": agentId}, function(data) {
+                console.log("Agent id: " + agentId);
+                console.log("Action: " + action);
+                console.log("Image path: " + image_path || "Null");
+                $.post("../../server/post/adminAgentHandler.php", {
+                    "type": "getById",
+                    "agentId": agentId,
+                    "session_id": sessionId,
+                    "fingerprint": fingerprint
+                }, function (data) {
                     const data_parsed = JSON.parse(data);
                     if (data_parsed.response?.message) {
                         const agentData = JSON.parse(data_parsed.response.message);
@@ -371,7 +392,7 @@ function agentSave() {
                                 const noDataRow = tbody.querySelector('.no-data-message');
                                 if (noDataRow) noDataRow.remove();
                             }
-                        }else if (action === 1) {
+                        } else if (action === 1) {
                             updateAgentRow(agentId, agentData);
                         }
                     }
@@ -381,7 +402,7 @@ function agentSave() {
                 Toast.error(`Ошибка [${data_parsed.error.code}]: ${data_parsed.error.message}`);
             }
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             Toast.error(`Ошибка: ${error}`);
         }
     });
@@ -439,12 +460,16 @@ function updateAgentRow(agentId, agentData) {
 }
 
 // ===== УДАЛЕНИЕ АГЕНТА =====
-function agentDelete(agentId) {
+async function agentDelete(agentId) {
     if (confirm('Вы действительно хотите удалить этого агента?')) {
+        const sessionId = getCookie('session_id');
+        const fingerprint = await collectFingerPrint();
         $.post("../../server/post/adminAgentHandler.php", {
             "type": "deleteAgent",
-            "agentId": agentId
-        }, function(data) {
+            "agentId": agentId,
+            "session_id": sessionId,
+            "fingerprint": fingerprint
+        }, function (data) {
             const data_parsed = JSON.parse(data);
             if (data_parsed.response?.code === 200) {
                 Toast.success("Агент удалён");

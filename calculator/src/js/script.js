@@ -3,6 +3,7 @@ const burger = document.getElementById('burger');
 const nav = document.getElementById('nav');
 const overlay = document.getElementById('overlay');
 let temp_order_data = null;
+let stop_sending = false;
 
 function toggleMenu() {
     burger.classList.toggle('active');
@@ -109,8 +110,12 @@ function renderItems() {
 }
 
 // Добавление элемента
-function addItem(category, itemId, event) {
-    console.log(event);
+function addItem(category, itemId) {
+    console.log("==== ЛОГ ДОБАВЛЕНИЯ ====");
+    console.log(`Item ID: ${itemId}`);
+    console.log(`Category: ${category}`);
+    console.log(`Item name: ${demoItems[category][itemId-1]["name"]}`);
+    console.log("==== КОНЕЦ ЛОГА ====");
     const itemsList = demoItems[category];
     const item = itemsList.find(i => i.id === itemId);
 
@@ -122,10 +127,16 @@ function addItem(category, itemId, event) {
     if (existingIndex !== -1) {
         let newQuantity = calculatorItems[category][existingIndex].quantity + 1;
         difference = demoItems[category][itemId]["available_stock"] - newQuantity;
-        console.log(difference);
-        calculatorItems[category][existingIndex].quantity += 1
         if (difference === 0) {
+            calculatorItems[category][existingIndex].quantity += 1
             calculatorItems[category][existingIndex].is_full = true;
+            console.log("Добавлено +1, достиг предел");
+        }else if (difference === -1) {
+            calculatorItems[category][existingIndex].is_full = true;
+            console.log("Не добавлено, т.к. предел");
+        }else{
+            calculatorItems[category][existingIndex].quantity += 1
+            console.log("Добавлено +1");
         }
     } else {
         difference = demoItems[category][itemId-1]["available_stock"] - 1;
@@ -133,15 +144,13 @@ function addItem(category, itemId, event) {
             calculatorItems[category].push({
                 ...item,
                 quantity: 1,
-                is_full: true,
-                item_id: itemId
+                is_full: true
             });
         }else{
             calculatorItems[category].push({
                 ...item,
                 quantity: 1,
-                is_full: false,
-                item_id: itemId
+                is_full: false
             });
         }
     }
@@ -163,7 +172,7 @@ function changeQuantity(category, index, delta) {
     if (newQuantity <= 0) {
         removeItem(category, index);
     } else {
-        let difference = demoItems[category][item.item_id]["available_stock"] - newQuantity;
+        let difference = demoItems[category][item.id]["available_stock"] - newQuantity;
         console.log(difference);
         item.quantity += 1
         item.is_full = difference === 0;
@@ -173,7 +182,16 @@ function changeQuantity(category, index, delta) {
 }
 
 // Очистка всего
-function resetCalculator() {
+function resetCalculator(bypass=false) {
+    if (bypass) {
+        calculatorItems = {
+            transport: [],
+            goods: [],
+            services: []
+        };
+        renderItems();
+        return;
+    }
     if (confirm('Очистить все выбранные услуги?')) {
         calculatorItems = {
             transport: [],
@@ -277,9 +295,12 @@ document.addEventListener('click', (e) => {
 
     // Оформление заказа
     if (e.target.id === 'orderBtn') {
-        if (calculatorItems.transport.length === 0 && calculatorItems.goods.length === 0 &&
-            calculatorItems.services.length) {
-            alert('Добавьте хотя бы одну услугу для оформления заказа');
+        if (calculatorItems.transport.length === 0) {
+            Toast.warning("Добавьте минимум 1 автомобиль для оформления заказа!");
+        }else if(calculatorItems.goods.length === 0) {
+            Toast.warning("Добавьте минимум 1 товар для оформления заказа!");
+        }else if(calculatorItems.services.length === 0) {
+            Toast.warning("Добавьте минимум 1 услугу для оформления заказа!");
         } else {
             document.getElementById('order_modal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -301,14 +322,16 @@ function orderCreate() {
         return;
     }
     if (order_modal_phone.value.trim() === '') {
-        Toast.warning("Введите имя!");
+        Toast.warning("Введите номер телефона!");
         return;
     }
     if (order_modal_email.value.trim() === '') {
-        Toast.warning("Введите имя!");
+        Toast.warning("Введите e-mail!");
         return;
     }
     if (temp_order_data != null) {
+        if (stop_sending) return;
+        stop_sending = true;
         $.post(
             "../../server/post/userOrdersHandler.php",
             {
@@ -323,13 +346,14 @@ function orderCreate() {
             function (data) {
                 let response = JSON.parse(data);
                 if (response.response && response.response.code === 200) {
-                    Toast.success("Заказ успешно оформлен.");
-                    Toast.success("21424332 - Ваш номер заказа");
+                    Toast.success("Заказ успешно оформлен. На вашу почту был отправлен номер заказа и чек.", 10000);
                     document.getElementById('order_modal').classList.remove('active');
                     document.body.style.overflow = 'auto';
+                    resetCalculator(true);
                 }
+                stop_sending = false;
             }
-        )
+        );
     }
 }
 
@@ -362,60 +386,25 @@ function loadSavedData() {
 }
 
 // ===== ПРЕСЕТЫ ТАРИФОВ =====
-const presets = {
-    econom: {
-        transport: [{ id: 3, name: 'ГАЗель NEXT', price: 13000, quantity: 1 }], // ГАЗель
-        goods: [{ id: 1, name: 'Гроб сосновый', price: 8900, quantity: 1 }],
-        services: [{ id: 1, name: 'Копка могилы (ручная)', price: 8000, quantity: 1 }]
-    },
-    standard: {
-        transport: [{ id: 1, name: 'Mercedes-Benz E-Class', price: 25000, quantity: 1 }],
-        goods: [{ id: 2, name: 'Гроб дубовый', price: 35000, quantity: 1 }],
-        services: [
-            { id: 2, name: 'Копка могилы (механизированная)', price: 12000, quantity: 1 },
-            { id: 4, name: 'Оформление документов', price: 3500, quantity: 1 }
-        ]
-    },
-    premium: {
-        transport: [{ id: 1, name: 'Mercedes-Benz E-Class', price: 25000, quantity: 1 }],
-        goods: [
-            { id: 2, name: 'Гроб дубовый', price: 35000, quantity: 1 },
-            { id: 3, name: 'Венок траурный', price: 3500, quantity: 2 }
-        ],
-        services: [
-            { id: 2, name: 'Копка могилы (механизированная)', price: 12000, quantity: 1 },
-            { id: 3, name: 'Отпевание в церкви', price: 5000, quantity: 1 },
-            { id: 4, name: 'Оформление документов', price: 3500, quantity: 1 }
-        ]
-    },
-    vip: {
-        transport: [
-            { id: 1, name: 'Mercedes-Benz E-Class', price: 25000, quantity: 1 },
-            { id: 4, name: 'Mercedes-Benz Sprinter', price: 24000, quantity: 2 }
-        ],
-        goods: [
-            { id: 2, name: 'Гроб дубовый', price: 35000, quantity: 1 },
-            { id: 3, name: 'Венок траурный', price: 3500, quantity: 5 }
-        ],
-        services: [
-            { id: 2, name: 'Копка могилы (механизированная)', price: 12000, quantity: 1 },
-            { id: 3, name: 'Отпевание в церкви', price: 5000, quantity: 1 },
-            { id: 4, name: 'Оформление документов', price: 3500, quantity: 1 }
-        ]
-    },
-    custom: {
-        transport: [],
-        goods: [],
-        services: []
-    }
+let presets = {};
+
+const findPresetById = (id) => {
+    return presets.find(preset => preset.id === id) || null;
 };
 
 // Функция загрузки пресета
-function loadPreset(presetName) {
-    const preset = presets[presetName];
-    if (!preset) return;
-
-    if (presetName === 'custom') {
+function loadPreset(presetId, bypass=false) {
+    if (presetId === 'custom') {
+        if (bypass) {
+            window.history.replaceState({}, '', 'index.php');
+            calculatorItems = {
+                transport: [],
+                goods: [],
+                services: []
+            };
+            renderItems();
+            return;
+        }
         if (confirm('Очистить все выбранные услуги?')) {
             calculatorItems = {
                 transport: [],
@@ -427,8 +416,20 @@ function loadPreset(presetName) {
         return;
     }
 
-    // Спрашиваем подтверждение
-    if (confirm(`Загрузить пакет "${getPresetTitle(presetName)}"? Текущие выбранные услуги будут заменены.`)) {
+    const preset = findPresetById(presetId)
+    if (!preset) return;
+
+    if (bypass) {
+        window.history.replaceState({}, '', 'index.php');
+        calculatorItems = {
+            transport: preset.transport.map(item => ({ ...item })),
+            goods: preset.goods.map(item => ({ ...item })),
+            services: preset.services.map(item => ({ ...item }))
+        };
+        renderItems();
+        return;
+    }
+    if (confirm(`Загрузить пакет "${presets[presetId-1]['name']}"? Текущие выбранные услуги будут заменены.`)) {
         // Копируем пресет в calculatorItems
         calculatorItems = {
             transport: preset.transport.map(item => ({ ...item })),
@@ -439,34 +440,8 @@ function loadPreset(presetName) {
     }
 }
 
-function getPresetTitle(presetName) {
-    const titles = {
-        econom: 'Эконом',
-        standard: 'Стандарт',
-        premium: 'Премиум',
-        vip: 'VIP',
-        custom: 'Конструктор'
-    };
-    return titles[presetName] || presetName;
-}
-
-// Обработчики для кнопок пресетов
-function initPresets() {
-    document.querySelectorAll('.preset-card').forEach(card => {
-        const presetName = card.dataset.preset;
-        const btn = card.querySelector('.btn-preset');
-
-        if (btn) {
-            btn.addEventListener('click', () => {
-                loadPreset(presetName);
-            });
-        }
-    });
-}
-
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
     loadSavedData();
     renderItems();
-    initPresets();  // Добавь эту строку
 });

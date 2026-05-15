@@ -2,15 +2,34 @@
 
 require_once  __DIR__.'/../../vendor/autoload.php';
 
+use managers\AdminsManager;
 use managers\AgentsManager;
+use managers\SessionManager;
 
+$adminsManager = new AdminsManager();
+if (isset($_COOKIE['session_id'])) {
+    if (is_numeric($_COOKIE['session_id'])) {
+        $login = new SessionManager()->getLoginById((int)$_COOKIE['session_id']);
+        if ($login === false) {
+            not_authorized();
+        }
+    }else not_authorized();
+}else not_authorized();
+$role = $adminsManager->getRole($login);
+if ($role !== 'admin' && $role !== 'manager') {
+    exit("У вас нет доступа к данной странице!");
+}
+function not_authorized(): never {
+    setcookie('session_id', '', time() - 3600, '/', '', false);
+    setcookie('login', '', time() - 3600, '/', '', false);
+    header('Location: ../auth.php');
+    exit;
+}
 $agentsManager = new AgentsManager();
 $agents = $agentsManager->getAll(true);
-
 ?>
 <div class="page-agents">
     <div class="page-header-actions">
-        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <label>
                 <input type="text" placeholder="Поиск по имени, должности...">
@@ -78,6 +97,7 @@ $agents = $agentsManager->getAll(true);
                 $statusText = 'Не активен';
                 $statusClass = '';
             }
+            $action = $role == 'admin' ? '<button class="btn-icon delete" onclick="agentDelete('.$agent['id'].')">🗑️</button>' : '';
             $position = $positions_map[$agent['position']];
             $age = $agent['age'].' '.number($agent['age'], ["год", "года", "лет"]);
             $experience = $agent['experience'].' '.number($agent['experience'], ["год", "года", "лет"]);
@@ -92,8 +112,8 @@ $agents = $agentsManager->getAll(true);
             <td><span class="status '.$statusClass.'">'.$statusText.'</span></td>
             <td>
                 <button class="btn-icon view" onclick="agentView('.$agent['id'].')">👁️</button>
-            <button class="btn-icon edit" onclick="agentEdit('.$agent['id'].')">✏️</button>
-            <button class="btn-icon delete" onclick="agentDelete('.$agent['id'].')">🗑️</button>
+                <button class="btn-icon edit" onclick="agentEdit('.$agent['id'].')">✏️</button>
+                '.$action.'
             </td>
         </tr>';
         }

@@ -57,4 +57,9 @@ class VehiclesExecutor
     {
         return file_get_contents(__DIR__ . "/../queries/vehicles/getAllForCalculator.sql");
     }
+
+    public static function GET_VEHICLE_BY_ID_FOR_CART()
+    {
+        return file_get_contents(__DIR__ . "/../queries/vehicles/getVehicleByIdForCart.sql");
+    }
 }

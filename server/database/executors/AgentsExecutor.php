@@ -31,7 +31,7 @@ class AgentsExecutor
 
     public static function GET_IMAGE_PATH_BY_ID(): false|string
     {
-        return file_get_contents(__DIR__."/../queries/agents/getImagePathByID.sql");
+        return file_get_contents(__DIR__."/../queries/agents/getImagePathById.sql");
     }
 
     public static function DELETE_AGENT(): false|string

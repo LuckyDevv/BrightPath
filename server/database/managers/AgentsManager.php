@@ -146,4 +146,17 @@ class AgentsManager extends Manager {
             return false;
         }
     }
+
+    public function getAllForOrders(): array
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `id`,`name`,`image_path`,`position` FROM `agents`;");
+            if ($stmt->execute()) {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }catch (PDOException|\Exception|\Error $e) {
+            $this->createLog("AgentsManager", $e);
+        }
+        return [];
+    }
 }

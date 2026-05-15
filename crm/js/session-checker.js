@@ -3,7 +3,7 @@ async function checkSession() {
     if (getLocalStorage("is_logout") !== null) {
         removeLocalStorage("is_logout");
         if (currentPage === "index.php" || currentPage === "") {
-            window.location.href = 'auth.php';
+            //window.location.href = 'auth.php';
         }
         return;
     }
@@ -12,7 +12,7 @@ async function checkSession() {
     // Если session_id нет и мы на index.php - сразу редирект
     if (sessionId === null) {
         if (currentPage === 'index.php' || currentPage === '') {
-            window.location.href = 'auth.php';
+            //window.location.href = 'auth.php';
             setLocalStorage("session_message", {
                 "err_code": 13,
                 "err_message": "Вы не вошли в аккаунт!"
@@ -31,12 +31,12 @@ async function checkSession() {
             const response = JSON.parse(data);
             if (response.response && response.response.code === 200) {
                 if (currentPage === 'auth.php') {
-                    window.location.href = 'index.php';
+                    //window.location.href = 'index.php';
                 }
             } else if (response.error) {
                 deleteCookie('session_id');
                 if (currentPage === 'index.php' || currentPage === '') {
-                    window.location.href = 'auth.php';
+                    //window.location.href = 'auth.php';
                     setLocalStorage("session_message", {
                         "err_code": response.error.code,
                         "err_message": response.error.message
@@ -50,7 +50,7 @@ async function checkSession() {
         console.error('Session check error:', error);
         // При ошибке лучше перестраховаться
         if (currentPage === 'index.php' || currentPage === '') {
-            window.location.href = 'auth.php';
+            //window.location.href = 'auth.php';
             setLocalStorage("session_message", {
                 "err_code": 12,
                 "err_message": "Произошла ошибка сервера. Войдите снова."

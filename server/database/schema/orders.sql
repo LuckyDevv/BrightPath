@@ -10,5 +10,10 @@ CREATE TABLE IF NOT EXISTS `orders` (
     `useremail` VARCHAR(255) NULL COMMENT 'Email пользователя',
     `summary` DECIMAL(12,2) NOT NULL DEFAULT 0 COMMENT 'Окончательная сумма заказа (₽)',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата создания заказа',
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата последнего обновления'
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата последнего обновления',
+    INDEX idx_created_at (`created_at`),
+    INDEX idx_status (`status`),
+    INDEX idx_useremail (`useremail`(100)),
+    INDEX idx_userphone (`userphone`(20)),
+    INDEX idx_created_status (`created_at`, `status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Таблица заказов';

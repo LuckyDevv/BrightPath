@@ -1,12 +1,33 @@
 <?php
 require_once __DIR__.'/../../vendor/autoload.php';
+
+use managers\AdminsManager;
+use managers\SessionManager;
 use managers\VehiclesManager;
+$adminsManager = new AdminsManager();
+if (isset($_COOKIE['session_id'])) {
+    if (is_numeric($_COOKIE['session_id'])) {
+        $login = new SessionManager()->getLoginById((int)$_COOKIE['session_id']);
+        if ($login === false) {
+            not_authorized();
+        }
+    }else not_authorized();
+}else not_authorized();
+$role = $adminsManager->getRole($login);
+if ($role !== 'admin' && $role !== 'manager') {
+    exit("У вас нет доступа к данной странице!");
+}
+function not_authorized(): never {
+    setcookie('session_id', '', time() - 3600, '/', '', false);
+    setcookie('login', '', time() - 3600, '/', '', false);
+    header('Location: ../auth.php');
+    exit;
+}
 $vehiclesManager = new VehiclesManager();
 $vehicles = $vehiclesManager->getAllVehicles(true);
 ?>
 <div class="page-vehicles">
     <div class="page-header-actions">
-        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <input type="text" placeholder="Поиск по модели...">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -56,6 +77,7 @@ $vehicles = $vehiclesManager->getAllVehicles(true);
                 $status = 'inactive';
                 $status_text = 'Не активен';
             }
+            $action = $role == 'admin' ? '<button class="btn-icon delete" onclick="vehicleDelete('.$vehicle["id"].')">🗑️</button>' : '';
             echo '
                     <tr id="tr_'.$vehicle["id"].'">
                         <td>'.$vehicle["id"].'</td>
@@ -68,7 +90,7 @@ $vehicles = $vehiclesManager->getAllVehicles(true);
                         <td>
                             <button class="btn-icon view" onclick="vehicleView('.$vehicle["id"].')">👁️</button>
                             <button class="btn-icon edit" onclick="vehicleEdit('.$vehicle["id"].')">✏️</button>
-                            <button class="btn-icon delete" onclick="vehicleDelete('.$vehicle["id"].')">🗑️</button>
+                            '.$action.'
                         </td>
                     </tr>';
         }

@@ -42,7 +42,8 @@ $data = [
             'sizes' => $goods['sizes'],
             'weight' => $goods['weight'],
             'total_stock' => $goods['total_stock'],
-        ]
+        ],
+        'page_end' => $twig->render('page_end.twig', ['basePath' => '../', "config" => new \lib\Config()->getConfig()])
     //'similar_vehicles' => getSimilarVehicles($vehiclesManager, $vehicle['id'], $vehicle['category']) // функция для похожих авто
 ];
 

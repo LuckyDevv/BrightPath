@@ -10,183 +10,7 @@ $twig = new Environment($loader, [
     //'cache' => '../server/twig/cache',
     'autoescape' => false,
 ]);
-
-/*$vehicles_data = [
-        [
-                "name" => "Mercedes-Benz E-Class",
-                "image_path" => "mercedes-e-class/",
-                "category" => 1, // 1 - катафалк
-                "seats" => 2,
-                "color" => "Черный",
-                "description_short" => "Премиальный катафалк для торжественных церемоний. Отделка салона премиум-класса.",
-                "description_full" => "Премиальный катафалк для торжественных церемоний. Автомобиль оборудован всем необходимым для достойных проводов. Отделка салона выполнена из высококачественных материалов, предусмотрено место для размещения цветов и венков. Регулярное техническое обслуживание, идеальное состояние. В стоимость входит подача автомобиля к месту церемонии, услуги водителя (до 4 часов).",
-                "price" => 25000.00,
-                "total_stock" => 12,
-                "reserved_stock" => 3,
-                "is_active" => 1,
-                "orders_count" => 45
-        ],
-        [
-                "name" => "Cadillac CTS",
-                "image_path" => "cadillac-cts/",
-                "category" => 1, // 1 - катафалк
-                "seats" => 2,
-                "color" => "Черный",
-                "description_short" => "Представительский катафалк американского производства. Просторный салон.",
-                "description_full" => "Представительский катафалк американского производства. Просторный салон, мягкая подвеска, полная шумоизоляция. Идеален для длительных церемоний. Отличный выбор для тех, кто ценит комфорт и надежность.",
-                "price" => 30000.00,
-                "total_stock" => 9,
-                "reserved_stock" => 2,
-                "is_active" => 1,
-                "orders_count" => 38
-        ],
-        [
-                "name" => "Hummer H2",
-                "image_path" => "hummer-h2/",
-                "category" => 1, // 1 - катафалк
-                "seats" => 2,
-                "color" => "Черный",
-                "description_short" => "Уникальный лимузин-катафалк на базе Hummer. Вместительный и внушительный.",
-                "description_full" => "Уникальный лимузин-катафалк на базе Hummer. Вместительный и внушительный. Привлекает внимание, подчеркивает статус. Подходит для нестандартных церемоний и VIP-клиентов.",
-                "price" => 35000.00,
-                "total_stock" => 4,
-                "reserved_stock" => 1,
-                "is_active" => 1,
-                "orders_count" => 29
-        ],
-        [
-                "name" => "ГАЗель NEXT",
-                "image_path" => "gazel-next/",
-                "category" => 1, // 1 - катафалк
-                "seats" => 2,
-                "color" => "Черный",
-                "description_short" => "Экономичный и надежный катафалк для любых мероприятий.",
-                "description_full" => "Экономичный и надежный катафалк для любых мероприятий. Отличный вариант для бюджетных похорон. Прост в управлении, малый расход топлива. Проверенный временем автомобиль.",
-                "price" => 13000.00,
-                "total_stock" => 19,
-                "reserved_stock" => 4,
-                "is_active" => 1,
-                "orders_count" => 52
-        ],
-        [
-                "name" => "Mercedes-Benz Sprinter",
-                "image_path" => "mercedes-sprinter/",
-                "category" => 2, // 2 - автобус для гостей
-                "seats" => 20,
-                "color" => "Черный",
-                "description_short" => "Комфортабельный автобус для перевозки гостей. Кондиционер, мягкие кресла.",
-                "description_full" => "Комфортабельный автобус для перевозки гостей. Кондиционер, мягкие кресла, отличная шумоизоляция. Идеален для транспортировки больших групп. Вместимость до 20 человек.",
-                "price" => 24000.00,
-                "total_stock" => 11,
-                "reserved_stock" => 2,
-                "is_active" => 1,
-                "orders_count" => 61
-        ],
-        [
-                "name" => "Ford Transit",
-                "image_path" => "ford-transit/",
-                "category" => 2, // 2 - автобус для гостей
-                "seats" => 16,
-                "color" => "Черный",
-                "description_short" => "Надежный микроавтобус для перевозки гостей.",
-                "description_full" => "Надежный микроавтобус для перевозки гостей. Оптимальное соотношение цены и качества. Просторный салон, удобные сиденья. Вместимость до 16 человек.",
-                "price" => 18000.00,
-                "total_stock" => 7,
-                "reserved_stock" => 1,
-                "is_active" => 1,
-                "orders_count" => 43
-        ],
-        [
-                "name" => "ПАЗ Вектор NEXT",
-                "image_path" => "paz-vector-next/",
-                "category" => 2, // 2 - автобус для гостей
-                "seats" => 30,
-                "color" => "Белый",
-                "description_short" => "Вместительный автобус для больших групп. Отличная проходимость.",
-                "description_full" => "Вместительный автобус для больших групп. Отличная проходимость, надежность. Подходит для перевозки большого количества гостей. Вместимость до 30 человек.",
-                "price" => 10000.00,
-                "total_stock" => 9,
-                "reserved_stock" => 2,
-                "is_active" => 1,
-                "orders_count" => 27
-        ],
-        [
-                "name" => "Toyota Camry",
-                "image_path" => "toyota-camry/",
-                "category" => 3, // 3 - легковой автомобиль
-                "seats" => 4,
-                "color" => "Черный",
-                "description_short" => "Автомобиль для сопровождения кортежа. Комфортный и престижный.",
-                "description_full" => "Автомобиль для сопровождения кортежа. Комфортный и престижный. Идеален для перевозки близких родственников. Высокий уровень комфорта, кондиционер, обогрев сидений.",
-                "price" => 8000.00,
-                "total_stock" => 9,
-                "reserved_stock" => 2,
-                "is_active" => 1,
-                "orders_count" => 73
-        ],
-        [
-                "name" => "Skoda Octavia",
-                "image_path" => "skoda-octavia/",
-                "category" => 3, // 3 - легковой автомобиль
-                "seats" => 4,
-                "color" => "Черный",
-                "description_short" => "Надежный автомобиль для поездок. Отличное соотношение цены и качества.",
-                "description_full" => "Надежный автомобиль для поездок. Отличное соотношение цены и качества. Экономичный расход топлива, просторный багажник. Отличный выбор для сопровождения.",
-                "price" => 6000.00,
-                "total_stock" => 13,
-                "reserved_stock" => 3,
-                "is_active" => 1,
-                "orders_count" => 68
-        ],
-        [
-                "name" => "Hyundai Solaris",
-                "image_path" => "hyundai-solaris/",
-                "category" => 3, // 3 - легковой автомобиль
-                "seats" => 4,
-                "color" => "Черный",
-                "description_short" => "Экономичный автомобиль для поездок. Идеален для небольших групп.",
-                "description_full" => "Экономичный автомобиль для поездок. Идеален для небольших групп. Малый расход топлива, компактный, удобный для города. Отличный бюджетный вариант.",
-                "price" => 4000.00,
-                "total_stock" => 17,
-                "reserved_stock" => 4,
-                "is_active" => 1,
-                "orders_count" => 55
-        ],
-        [
-                "name" => "DongFeng K33-561",
-                "image_path" => "dongfeng-K33-561/",
-                "category" => 4, // 4 - спецтранспорт
-                "seats" => 2,
-                "color" => "Черный",
-                "description_short" => "Специальный транспорт для перевозки крупногабаритных грузов.",
-                "description_full" => "Специальный транспорт для перевозки крупногабаритных грузов. Просторный кузов, высокая грузоподъемность. Подходит для нестандартных ситуаций.",
-                "price" => 22000.00,
-                "total_stock" => 5,
-                "reserved_stock" => 1,
-                "is_active" => 1,
-                "orders_count" => 19
-        ],
-        [
-                "name" => "Lincoln Town Car III",
-                "image_path" => "lincoln-town-car-iii/",
-                "category" => 4, // 4 - спецтранспорт (лимузин)
-                "seats" => 8,
-                "color" => "Черный",
-                "description_short" => "Роскошный лимузин для VIP-церемоний. Максимальный комфорт.",
-                "description_full" => "Роскошный лимузин для VIP-церемоний. Максимальный комфорт, кожаный салон, отличная шумоизоляция. Идеален для самых требовательных клиентов. Вместимость до 8 человек.",
-                "price" => 35000.00,
-                "total_stock" => 7,
-                "reserved_stock" => 2,
-                "is_active" => 1,
-                "orders_count" => 31
-        ]
-];
-foreach ($vehicles_data as $vehicle) {
-    $vehiclesManager->addVehicle($vehicle);
-}*/
-
 ?>
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -197,6 +21,7 @@ foreach ($vehicles_data as $vehicle) {
     <link rel="stylesheet" href="../src/css/nav.css">
     <link rel="stylesheet" href="../src/css/modal.css">
     <link rel="stylesheet" href="../src/css/footer.css">
+    <link rel="stylesheet" href="../src/css/toasts.css">
     <link rel="icon" href="../logo.png" type="image/png">
 </head>
 <body>
@@ -455,15 +280,15 @@ echo $twig->render("header.twig");
     </section>
 </main>
 <?php
-echo $twig->render("footer.twig");
-echo $twig->render("modal.twig");
+echo $twig->render("page_end.twig", ['basePath' => '../', "config" => new \lib\Config()->getConfig()]);
 ?>
-<!-- footer -->
-<!-- modal -->
+<script src="../src/js/jquery.min.js"></script>
+<script src="../src/js/toasts.js"></script>
+<script src="../src/js/modal.js"></script>
 <script src="src/js/index.js"></script>
+<script src="../src/js/cartHelper.js"></script>
 <script>
     vehiclesData = <?= json_encode($vehicles, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
 </script>
-<script src="../src/js/modal.js"></script>
 </body>
 </html>

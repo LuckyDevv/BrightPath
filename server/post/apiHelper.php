@@ -1,5 +1,8 @@
 <?php
 
+use lib\AdminLogger;
+use managers\SessionManager;
+
 date_default_timezone_set('Europe/Moscow');
 
 function logging(string $fileName, string $text): void
@@ -66,6 +69,21 @@ function convertToJpg($sourcePath, $destinationPath = null, $quality = 90)
     imagedestroy($image);
 
     return $destinationPath;
+}
+
+function getAdminLoginFromSession()
+{
+    try {
+        if (!isset($_POST['session_id']) || !is_numeric($_POST['session_id'])) error("Не передан ID сессии!", 490);
+        if (!isset($_POST['fingerprint'])) error("Не передан цифровой отпечаток!", 491);
+        $session_manager = new SessionManager();
+        $session = $session_manager->verifySession((int)$_POST['session_id'], $_POST['fingerprint'], $_SERVER['REMOTE_ADDR'], false);
+        if (is_array($session)) {
+            return $session["admin_login"];
+        } else error(\lib\Config::SESSION_MESSAGES_MAP[$session], 492);
+    }catch (\Exception|\Error $e){
+        logging("apiHelper", $e->getMessage());
+    }
 }
 
 ?>

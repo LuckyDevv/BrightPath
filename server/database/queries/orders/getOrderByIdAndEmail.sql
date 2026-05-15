@@ -1,1 +1,1 @@
-SELECT * FROM `orders` WHERE `id` = :id OR `useremail` = :email;
+SELECT * FROM `orders` WHERE `id` = :id AND `useremail` = :email;

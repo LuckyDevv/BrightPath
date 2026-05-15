@@ -39,7 +39,7 @@ class OrdersManager extends Manager
             $stmt->bindParam(":id", $orderId, PDO::PARAM_INT);
             $stmt->bindParam(":email", $email);
             if ($stmt->execute()) {
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                return $stmt->fetch();
             }
         }catch (\PDOException|\Error|\Exception $e){
             $this->createLog("OrdersManager", $e);
@@ -188,5 +188,71 @@ class OrdersManager extends Manager
             $this->createLog("OrdersManager", $e);
         }
         return 0;
+    }
+
+    public function getOrderById(int $orderId): false|array
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `agents`,`username`,`useremail`,`userphone`,`summary`,`status`,`transport`,`goods`,`services` FROM `orders` WHERE `id` = :id");
+            $stmt->bindParam(':id', $orderId);
+            if ($stmt->execute()) {
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            }
+        }catch (\PDOException|\Error|\Exception $e){
+            $this->createLog("OrdersManager", $e);
+        }
+        return false;
+    }
+
+    public function changeStatus(int $id, string $newStatus): bool
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE `orders` SET `status` = :status WHERE `id` = :id");
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':status', $newStatus);
+            return $stmt->execute();
+        }catch (\PDOException|\Error|\Exception $e){
+            $this->createLog("OrdersManager", $e);
+        }
+        return false;
+    }
+
+    public function completeOrder(int $id, string $agents): bool
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE `orders` SET `status` = 'completed', `agents` = :agents WHERE `id` = :id");
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':agents', $agents);
+            return $stmt->execute();
+        }catch (\PDOException|\Error|\Exception $e){
+            $this->createLog("OrdersManager", $e);
+        }
+        return false;
+    }
+
+    public function deleteById(int $id): bool
+    {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM `orders` WHERE `id` = :id;");
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        }catch(\PDOException|\Exception|\Error $e){
+            $this->createLog("OrdersManager", $e);
+            return false;
+        }
+    }
+
+    public function getClientById(int $id): array|false
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT `username`,`useremail`,`userphone`,`created_at` FROM `orders` WHERE `id` = :id;");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            }
+        }catch (\PDOException|\Error|\Exception $e){
+            $this->createLog("OrdersManager", $e);
+        }
+        return false;
     }
 }

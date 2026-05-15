@@ -1,12 +1,34 @@
 <?php
 require_once __DIR__.'/../../vendor/autoload.php';
+
+use managers\AdminsManager;
 use managers\ServicesManager;
+use managers\SessionManager;
+
+$adminsManager = new AdminsManager();
+if (isset($_COOKIE['session_id'])) {
+    if (is_numeric($_COOKIE['session_id'])) {
+        $login = new SessionManager()->getLoginById((int)$_COOKIE['session_id']);
+        if ($login === false) {
+            not_authorized();
+        }
+    }else not_authorized();
+}else not_authorized();
+function not_authorized(): never {
+    setcookie('session_id', '', time() - 3600, '/', '', false);
+    setcookie('login', '', time() - 3600, '/', '', false);
+    header('Location: ../auth.php');
+    exit;
+}
+$role = $adminsManager->getRole($login);
+if ($role !== 'admin' && $role !== 'manager') {
+    exit("У вас нет доступа к данной странице!");
+}
 $servicesManager = new ServicesManager();
 $services = $servicesManager->getAllServices(true);
 ?>
 <div class="page-services">
     <div class="page-header-actions">
-        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <input type="text" placeholder="Поиск по названию...">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -55,6 +77,7 @@ $services = $servicesManager->getAllServices(true);
                 $status = 'inactive';
                 $status_text = 'Не активен';
             }
+            $action = $role == 'admin' ? '<button class="btn-icon delete" onclick="serviceDelete('.$service["id"].')">🗑️</button>' : '';
             echo '
                     <tr id="tr_'.$service["id"].'">
                         <td>'.$service["id"].'</td>
@@ -65,7 +88,7 @@ $services = $servicesManager->getAllServices(true);
                         <td>
                             <button class="btn-icon view" onclick="serviceView('.$service["id"].')">👁️</button>
                             <button class="btn-icon edit" onclick="serviceEdit('.$service["id"].')">✏️</button>
-                            <button class="btn-icon delete" onclick="serviceDelete('.$service["id"].')">🗑️</button>
+                            '.$action.'
                         </td>
                     </tr>';
         }

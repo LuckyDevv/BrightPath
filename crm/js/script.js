@@ -19,6 +19,7 @@ document.querySelectorAll('.nav-item[data-page]').forEach(item => {
             agents: ['Агенты', 'Сотрудники агентства'],
             admins: ['Администраторы', 'Управление доступом'],
             services: ['Ритуальные услуги', 'Каталог ритуальных услуг'],
+            requests: ['Заявки на консультацию', 'Список заявок клиентов, которым нужна консультация'],
             settings: ['Настройки', 'Параметры сайта']
         };
 
@@ -39,6 +40,18 @@ document.querySelectorAll('.nav-item[data-page]').forEach(item => {
                 case "services":
                     initServices();
                     break;
+                case "orders":
+                    initOrders();
+                    break;
+                case "goods":
+                    initGoods();
+                    break;
+                case "settings":
+                    initSettings();
+                    if (admin_role === 'manager' || admin_role === 'admin') {
+                        initMoreSettings();
+                    }
+                    break;
             }
         } catch (error) {
             console.error('Ошибка загрузки:', error);
@@ -46,6 +59,16 @@ document.querySelectorAll('.nav-item[data-page]').forEach(item => {
         }
     });
 });
+
+const getFormattedDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы считаются с 0 (январь — 0), поэтому добавляем 1
+    const day = String(date.getDate()).padStart(2, '0');
+    const hour = String(date.getHours() + 1).padStart(2, '0');
+    const minutes = String(date.getMinutes() + 1).padStart(2, '0');
+    const seconds = String(date.getSeconds() + 1).padStart(2, '0');
+    return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
+};
 
 // ===== ИНИЦИАЛИЗАЦИЯ СКРИПТОВ ДЛЯ СТРАНИЦЫ =====
 function initPageScripts() {

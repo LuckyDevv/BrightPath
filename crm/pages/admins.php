@@ -1,11 +1,29 @@
 <?php
 include_once __DIR__."/../../vendor/autoload.php";
 use managers\AdminsManager;
+use managers\SessionManager;
 $adminsManager = new AdminsManager();
+if (isset($_COOKIE['session_id'])) {
+    if (is_numeric($_COOKIE['session_id'])) {
+        $login = new SessionManager()->getLoginById((int)$_COOKIE['session_id']);
+        if ($login === false) {
+            not_authorized();
+        }
+    }else not_authorized();
+}else not_authorized();
+$role = $adminsManager->getRole($login);
+if ($role !== 'admin') {
+    exit("У вас нет доступа к данной странице!");
+}
+function not_authorized(): never {
+    setcookie('session_id', '', time() - 3600, '/', '', false);
+    setcookie('login', '', time() - 3600, '/', '', false);
+    header('Location: ../auth.php');
+    exit;
+}
 ?>
 <div class="page-admins">
     <div class="page-header-actions">
-        <button class="btn-export">📊 Экспорт</button>
         <div class="search-bar">
             <input type="text" placeholder="Поиск по логину...">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -26,7 +44,7 @@ $adminsManager = new AdminsManager();
                 <option value="заблокирован">Заблокирован</option>
             </select>
         </div>
-        <button class="btn-add">+</button>
+        <button class="btn-add" onclick="addAdminModal()">+</button>
     </div>
 
     <table class="data-table">
@@ -41,7 +59,7 @@ $adminsManager = new AdminsManager();
             <th>Действия</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="admin_table">
         <?php
         $admins = $adminsManager->getAllAdmins();
         if (count($admins) > 0) {
@@ -73,36 +91,31 @@ $adminsManager = new AdminsManager();
         </tbody>
     </table>
 </div>
-<div class="modal-overlay" id="adm_modal_create">
-    <div class="modal-container" id="modal_container">
+<div class="modal-overlay" id="adm_modal_add">
+    <div class="modal-container" id="adm_modal_edit_container">
         <div class="modal-header">
-            <h2 id="adm_modal_create_title" class="modal-title">Добавление администратора</h2>
+            <h2 id="adm_modal_edit_title" class="modal-title">Добавление администратора</h2>
             <button class="modal-close" onclick="adminCloseCreate()">&times;</button>
         </div>
         <div class="modal-content">
             <form class="modal-form">
                 <div class="form-group">
                     <label>Логин администратора</label>
-                    <input type="text" value="" id="adm_modal_create_name" placeholder="Введите логин...">
+                    <input type="text" id="adm_modal_open_login">
                 </div>
+                <!-- Роль (выбор) -->
                 <div class="form-group">
                     <label>Роль</label>
-                    <select id="adm_modal_create_role">
-                        <option disabled selected hidden>Выберите роль</option>
-                        <option id="adm_modal_create_operator">Оператор</option>
-                        <option id="adm_modal_create_manager">Менеджер</option>
-                        <option id="adm_modal_create_admin">Администратор</option>
+                    <select id="adm_modal_add_role">
+                        <option value="operator">Оператор</option>
+                        <option value="manager">Менеджер</option>
+                        <option value="admin">Администратор</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Доступ</label>
-                    <select id="adm_modal_create_status">
-                        <option disabled selected hidden>Выберите доступ</option>
-                        <option id="adm_modal_create_active">Активен</option>
-                        <option id="adm_modal_create_blocked">Заблокирован</option>
-                    </select>
+                <!-- Кнопки действий -->
+                <div class="form-actions">
+                    <button type="button" class="modal-submit" id="adm_modal_add_save" onclick="adminSaveAdd()">Сохранить изменения</button>
                 </div>
-                <button id="adm_modal_create_save" type="button" class="modal-submit" onclick="adminSaveCreate()">Сохранить</button>
             </form>
         </div>
     </div>

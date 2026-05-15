@@ -13,5 +13,9 @@ CREATE TABLE IF NOT EXISTS `goods` (
     `total_stock` INT NOT NULL DEFAULT 1 COMMENT 'Остатки на складе',
     `is_active` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Показывать на сайте',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата создания',
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата обновления'
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Дата обновления',
+    INDEX idx_active_stock (`is_active`, `total_stock`),
+    INDEX idx_active_orders (`is_active`, `orders_count`),
+    INDEX idx_category (`category`),
+    INDEX idx_name (`name`(100))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
