@@ -105,8 +105,8 @@
 
 1. **Клонировать репозиторий**
    ```bash
-   git clone https://github.com/ваш-username/svetly-put.git
-   cd svetly-put
+   git clone https://github.com/LuckyDevv/BrightPath.git
+   cd BrightPath
 2. **Установить зависимости Composer**
    ```bash
    composer install --no-dev --optimize-autoloader
